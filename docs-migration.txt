@@ -1,0 +1,19 @@
+Deploy discovery -> postgres -> keycload-mysql -> keycload -> user-service -> product-service -> cart-service -> api-gateway
+
+Quy trình:
+1. Triển khai dự án với add host
+2. Thêm domain 
+
+Các bước thực hiện:
+1. Build image -> push image registry
+2. Config storage (keycload, postgres)
+3. Yaml
+    configmap or secret
+    deployment 
+    service 
+    ingress
+    pv pvc
+
+4. Addhost
+5. Test dev
+6. Public domain
