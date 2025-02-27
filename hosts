@@ -1,0 +1,10 @@
+192.168.10.154 storage-master-1
+192.168.10.153 storage-master-2
+192.168.10.149 storage-master-3
+
+54.252.209.20  harbor.rnd.com
+
+
+192.168.10.148  keycloak-shopnow.ndthang.com
+192.168.10.148  shopnow.ndthang.com
+192.168.10.148  discovery-server-shopnow.ndthang.com
