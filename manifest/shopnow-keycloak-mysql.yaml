@@ -63,10 +63,13 @@ spec:
           ports:
             - containerPort: 3306
               name: mysql
+      # volumes:
+      #   - name: mysql-data
+      #     persistentVolumeClaim:
+      #       claimName: mysql-pvc
       volumes:
         - name: mysql-data
-          persistentVolumeClaim:
-            claimName: mysql-pvc
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
