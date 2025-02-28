@@ -3,6 +3,7 @@ FROM openjdk:17-jdk-slim AS builder
 
 WORKDIR /app
 COPY . .
+RUN chmod +x ./mvnw
 RUN ./mvnw clean package -DskipTests
 
 # Stage 2: Run the application
