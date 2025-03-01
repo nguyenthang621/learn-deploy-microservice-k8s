@@ -7,6 +7,7 @@ data:
   application.properties: |
     # Application configuration
     spring.application.name=user-service
+    spring.cloud.config.enabled=false
     server.port=5865
 
     eureka.instance.hostname=user-service
@@ -20,6 +21,8 @@ data:
     spring.jpa.hibernate.ddl-auto=update
     spring.jpa.show-sql=true
     spring.jpa.properties.hibernate.format-sql=true
+    spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+    spring.jpa.hibernate.ddl-auto=update
 
     # JWT configuration
     jwt.issuer_uri=http://shopnow-keycloak-realms-service:8080/realms/java-microservice-realm/protocol/openid-connect/token
@@ -53,7 +56,7 @@ spec:
       namespace: shopnow
     spec:
       containers:
-        - image: harbor.devopseduvn.live/shopnow/user-service:v1
+        - image: harbor.rnd.com/shopnow/user-service:v1
           imagePullPolicy: Always
           name: shopnow-user-service
           ports:
@@ -65,7 +68,7 @@ spec:
               name: shopnow-user-service-application-properties-config-volume
               subPath: application.properties
       imagePullSecrets:
-      - name: shopnow-registry-secret
+        - name: shopnow-registry-secret
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       volumes:
@@ -102,7 +105,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: user-service-shopnow.devopseduvn.live
+    - host: user-service-shopnow.ndthang.com
       http:
         paths:
           - backend:
