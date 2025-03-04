@@ -76,6 +76,16 @@ spec:
             defaultMode: 420
             name: shopnow-user-service-application-properties-configmap
           name: shopnow-user-service-application-properties-config-volume
+      ## Cấu hình scheduling pod trên node cụ thể
+      # affinity:
+      #   nodeAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       nodeSelectorTerms:
+      #         - matchExpressions:
+      #             - key: kubernetes.io/hostname
+      #               operator: In
+      #               values:
+      #                 - ubuntu
 ---
 apiVersion: v1
 kind: Service

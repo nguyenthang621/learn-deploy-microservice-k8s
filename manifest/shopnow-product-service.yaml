@@ -44,7 +44,7 @@ spec:
       namespace: shopnow
     spec:
       containers:
-        - image: harbor.devopseduvn.live/shopnow/product-service:v1
+        - image: harbor.rnd.com/shopnow/product-service:v1
           imagePullPolicy: Always
           name: shopnow-product-service
           ports:
@@ -56,7 +56,7 @@ spec:
               name: shopnow-product-service-application-properties-config-volume
               subPath: application.properties
       imagePullSecrets:
-      - name: shopnow-registry-secret
+        - name: shopnow-registry-secret
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       volumes:
@@ -93,7 +93,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: product-service-shopnow.devopseduvn.live
+    - host: product-service-shopnow.ndthang.com
       http:
         paths:
           - backend:

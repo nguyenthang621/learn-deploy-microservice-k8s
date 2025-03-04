@@ -9,7 +9,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   nfs:
-    path: /data/nfs-shared/mysql
+    path: /data/ndthang2/mysql
     server: 192.168.10.155
   persistentVolumeReclaimPolicy: Retain
   storageClassName: nfs-storage
@@ -63,13 +63,13 @@ spec:
           ports:
             - containerPort: 3306
               name: mysql
-      # volumes:
-      #   - name: mysql-data
-      #     persistentVolumeClaim:
-      #       claimName: mysql-pvc
       volumes:
         - name: mysql-data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: mysql-pvc
+      # volumes:
+      #   - name: mysql-data
+      #     emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
