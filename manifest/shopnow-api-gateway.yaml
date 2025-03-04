@@ -58,7 +58,7 @@ spec:
       namespace: shopnow
     spec:
       containers:
-        - image: harbor.devopseduvn.live/shopnow/api-gateway:v1
+        - image: harbor.rnd.com/shopnow/api-gateway:v1
           imagePullPolicy: Always
           name: shopnow-api-gateway
           ports:
