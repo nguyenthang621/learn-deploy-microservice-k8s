@@ -9,10 +9,11 @@ spec:
   accessModes:
     - ReadWriteOnce
   nfs:
-    path: /data/ndthang2/keycloak-realms
+    path: /data/nfs-shared2/keycloak-realms
     server: 192.168.10.155
   persistentVolumeReclaimPolicy: Retain
   storageClassName: nfs-storage
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

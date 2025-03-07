@@ -9,8 +9,11 @@ spec:
   accessModes:
     - ReadWriteOnce
   nfs:
-    path: /data/ndthang2/mysql
+    path: /data/nfs-shared2/mysql
     server: 192.168.10.155
+
+  mountOptions: # Bỏ qua khóa tệp
+    - nolock
   persistentVolumeReclaimPolicy: Retain
   storageClassName: nfs-storage
 ---
@@ -46,7 +49,7 @@ spec:
     spec:
       containers:
         - name: shopnow-keycloak-mysql
-          image: mysql:5.7
+          image: mysql:5.6
           imagePullPolicy: Always
           env:
             - name: MYSQL_ROOT_PASSWORD

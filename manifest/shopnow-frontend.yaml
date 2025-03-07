@@ -1,3 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shopnow-frontend-env-configmap
+  namespace: shopnow
+data:
+  .env: |
+    REACT_APP_BASE_API_URL=http://api-shopnow.ndthang.com/api/
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -30,8 +40,17 @@ spec:
             - containerPort: 80
               name: tcp
               protocol: TCP
+          volumeMounts:
+            - mountPath: /app/.env
+              name: shopnow-frontend-env-configmap
+              subPath: .env
       imagePullSecrets:
         - name: shopnow-registry-secret
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: shopnow-frontend-env-configmap
+          name: shopnow-frontend-env-configmap
 ---
 apiVersion: v1
 kind: Service

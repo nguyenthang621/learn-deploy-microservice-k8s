@@ -5,7 +5,10 @@
 54.252.209.20  harbor.rnd.com
 
 
-192.168.10.148  keycloak-shopnow.ndthang.com
-192.168.10.148  shopnow.ndthang.com
-192.168.10.148  discovery-server-shopnow.ndthang.com
-192.168.10.148  user-service-shopnow.ndthang.com
+192.168.10.133  user-service-shopnow.ndthang.com
+192.168.10.133  product-service-shopnow.ndthang.com
+192.168.10.133  api-shopnow.ndthang.com
+192.168.10.133  cart-service-shopnow.ndthang.com
+192.168.10.133  keycloak-shopnow.ndthang.com
+192.168.10.133  shopnow.ndthang.com
+192.168.10.133  discovery-server-shopnow.ndthang.com
