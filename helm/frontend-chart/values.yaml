@@ -35,8 +35,9 @@ deployment:
     repository: harbor.rnd.com/shopnow/frontend
     tag: v2
     pullPolicy: IfNotPresent
-  imagePullSecrets:
-    - name: shopnow-registry-secret
+
+  # Secrets used to pull image
+  imagePullSecrets: ["shopnow-registry-secret"]
 
   # Resources to be defined for pod
   resources:
