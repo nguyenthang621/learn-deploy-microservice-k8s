@@ -93,9 +93,9 @@ ingress:
     - host: "{{ .Release.Name }}.ndthang.live"
       paths:
         - path: /
-      pathType: "Prefix"
-      serviceName: "shopnow-frontend-service"
-      servicePort: 80
+          pathType: "Prefix"
+          serviceName: "shopnow-frontend-service"
+          servicePort: 80
 
 autoscaling:
   # enabled is a boolean flag for enabling or disabling autoscaling
