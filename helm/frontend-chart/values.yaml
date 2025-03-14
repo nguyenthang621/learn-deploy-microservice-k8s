@@ -8,6 +8,7 @@ labels:
   group: com.ndthang.group
   team: ndthang
 deployment:
+  enabled: true
   dnsConfig:
     options:
       - name: ndots
@@ -62,6 +63,7 @@ deployment:
 
 # Service object for servicing pods
 service:
+  enabled: true
   annotations:
     config.xposer.stakater.com/Domain: ndthang.live
     config.xposer.stakater.com/IngressNameTemplate: '{{ "{{.Service}}" }}'
