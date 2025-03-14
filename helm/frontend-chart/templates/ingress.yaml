@@ -32,11 +32,13 @@ spec:
             service:
               name: {{ default $applicationNameTpl (.serviceName) }}
               port:
-                {{- if kindIs "int" .servicePort }}
-                  number: {{ .servicePort }}
-                  {{- else }}
-                  name: {{ default "http" (.servicePort | quote) }}
-                  {{- end }}
+                {{- if .servicePort | kindIs "int" }}
+                number: {{ .servicePort }}
+                {{- else if .servicePort | kindIs "float64" }}
+                number: {{ .servicePort | int }}
+                {{- else }}
+                name: {{ default "http" (.servicePort | quote) }}
+                {{- end }}
         {{- end }}
         {{- else }}
         {{ fail "Specify paths for ingress host, check values.yaml" }}
