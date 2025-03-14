@@ -33,7 +33,7 @@ deployment:
   # Image of the app container
   image:
     repository: harbor.rnd.com/shopnow/frontend
-    tag: v1
+    tag: v2
     pullPolicy: IfNotPresent
 
   # Resources to be defined for pod
