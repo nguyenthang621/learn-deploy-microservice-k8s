@@ -102,3 +102,7 @@ ingress:
     kubernetes.io/ingress.class: external-ingress
     ingress.kubernetes.io/rewrite-target: /
     ingress.kubernetes.io/force-ssl-redirect: "true"
+
+autoscaling:
+  # enabled is a boolean flag for enabling or disabling autoscaling
+  enabled: false
