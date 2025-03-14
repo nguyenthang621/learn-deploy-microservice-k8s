@@ -28,8 +28,7 @@ deployment:
   replicas: 2
 
   env:
-    REACT_APP_BASE_API_URL:
-      value: "http://api-shopnow.ndthang.live/api/"
+    REACT_APP_BASE_API_URL: "http://api-shopnow.ndthang.live/api/"
 
   # Image of the app container
   image:
