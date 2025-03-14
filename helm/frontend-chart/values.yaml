@@ -159,7 +159,7 @@ ingress:
       paths:
         - path: /
           pathType: "Prefix"
-          serviceName: "{{ .Values.applicationName }}"
+          serviceName: "frontend-shopnow"
           servicePort: 80
 
 # Route object for exposing services (OpenShift only)
