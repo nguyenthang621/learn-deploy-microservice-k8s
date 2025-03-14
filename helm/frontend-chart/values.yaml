@@ -61,6 +61,11 @@ deployment:
   # Networking using the host network
   hostNetwork: true
 
+  openshiftOAuthProxy:
+    enabled: false
+    port: 8080
+    secretName: "openshift-oauth-proxy-tls"
+
 # Service object for servicing pods
 service:
   enabled: true
