@@ -136,6 +136,56 @@ ingress:
           serviceName: "shopnow-frontend-service"
           servicePort: 80
 
+# Additional ConfigMaps
+configMap:
+  enabled: true
+  additionalLabels:
+    key: value
+  annotations:
+    # key: value
+  files:
+    code-config:
+      key1: value1
+      key2: value2
+    dev-config:
+      key1: value1
+      key2: value2
+
 autoscaling:
-  # enabled is a boolean flag for enabling or disabling autoscaling
+  enabled: false
+persistence:
+  enabled: false
+route:
+  enabled:
+secretProviderClass:
+  enabled: false
+forecastle:
+  enabled: false
+rbac:
+  enabled: false
+sealedSecret:
+  enabled: false
+secret:
+  enabled: false
+serviceMonitor:
+  enabled: false
+vpa:
+  enabled: false
+endpointMonitor:
+  enabled: false
+alertmanagerConfig:
+  enabled: false
+prometheusRule:
+  enabled: false
+externalSecret:
+  enabled: false
+pdb:
+  enabled: false
+grafanaDashboard:
+  enabled: false
+cronJob:
+  enabled: false
+backup:
+  enabled: false
+job:
   enabled: false
