@@ -26,7 +26,7 @@ deployment:
   reloadOnChange: true
 
   # Replicas to be created
-  replicas: 2
+  replicas: 1
   env:
     REACT_APP_BASE_API_URL: "http://api-shopnow.ndthang.live/api/"
 
@@ -159,7 +159,7 @@ ingress:
       paths:
         - path: /
           pathType: "Prefix"
-          serviceName: "shopnow-frontend-service"
+          serviceName: "{{ .Values.applicationName }}"
           servicePort: 80
 
 # Route object for exposing services (OpenShift only)
