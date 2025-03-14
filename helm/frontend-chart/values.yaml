@@ -66,6 +66,39 @@ deployment:
     port: 8080
     secretName: "openshift-oauth-proxy-tls"
 
+  # Startup, Readiness and Liveness probes
+  startupProbe:
+    enabled: false
+    failureThreshold: 30
+    periodSeconds: 10
+    httpGet:
+      path: "/path"
+      port: 8080
+    exec: {}
+
+  readinessProbe:
+    enabled: false
+    failureThreshold: 3
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+    initialDelaySeconds: 10
+    exec:
+      command:
+        - cat
+        - tmp/healthy
+
+  livenessProbe:
+    enabled: false
+    failureThreshold: 3
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+    initialDelaySeconds: 10
+    httpGet:
+      path: /path
+      port: 8080
+
 # Service object for servicing pods
 service:
   enabled: true
