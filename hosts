@@ -12,3 +12,8 @@
 192.168.10.133  keycloak-shopnow.ndthang.com
 192.168.10.133  shopnow.ndthang.com
 192.168.10.133  discovery-server-shopnow.ndthang.com
+192.168.10.133  argocd.ndthang.com
+
+192.168.10.133  kong-admin.ndthang.live
+192.168.10.133  kong-manager.ndthang.live
+192.168.10.133  gw.ndthang.live
