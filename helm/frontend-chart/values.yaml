@@ -128,16 +128,6 @@ persistence:
 # Service object for servicing pods
 service:
   enabled: true
-  annotations:
-    config.xposer.stakater.com/Domain: ndthang.live
-    config.xposer.stakater.com/IngressNameTemplate: '{{ "{{.Service}}" }}'
-    config.xposer.stakater.com/IngressURLPath: /
-    config.xposer.stakater.com/IngressURLTemplate: '{{ "{{.Service}}.{{.Domain}}" }}'
-    xposer.stakater.com/annotations: |-
-      kubernetes.io/ingress.class: external-ingress
-      ingress.kubernetes.io/rewrite-target: /
-      ingress.kubernetes.io/force-ssl-redirect: "false"
-
   ports:
     - port: 80
       name: http
