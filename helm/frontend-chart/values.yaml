@@ -33,7 +33,7 @@ deployment:
   # Image of the app container
   image:
     repository: harbor.rnd.com/shopnow/frontend
-    tag: v2
+    tag: v3
     pullPolicy: IfNotPresent
 
   # Secrets used to pull image
