@@ -21,7 +21,7 @@ WORKDIR /usr/share/nginx/html
 COPY --from=builder  /app/./env.sh .
 COPY --from=builder  /app/.env .
 
-RUN chown -R ndthang:ndthang /usr/share/nginx/html
+# RUN chown -R ndthang:ndthang /usr/share/nginx/html
 # Make our shell script executable
 RUN chmod +x env.sh
 # USER ndthang
