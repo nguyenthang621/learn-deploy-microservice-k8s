@@ -16,33 +16,44 @@
 # limitations under the License.
 #
 
-# Recreate config file
+#!/bin/bash
 rm -rf ./env-config.js
 touch ./env-config.js
 
-# Add assignment 
-echo "window._env_ = {" >> ./env-config.js
+# Bắt đầu file với một IIFE (Immediately Invoked Function Expression) để chạy ngay khi load
+echo "(function () {" >> ./env-config.js
 
-# Read each line in .env file
-# Each line represents key=value pairs
-while read -r line || [[ -n "$line" ]];
-do
-  # Split env variables by character `=`
+# Khởi tạo window._env_
+echo "  window._env_ = {" >> ./env-config.js
+
+# Đọc và xử lý biến từ .env hoặc biến môi trường container
+while read -r line || [[ -n "$line" ]]; do
   if printf '%s\n' "$line" | grep -q -e '='; then
     varname=$(printf '%s\n' "$line" | sed -e 's/=.*//')
     varvalue=$(printf '%s\n' "$line" | sed -e 's/^[^=]*=//')
-  fi
-
-  # Read value of current variable if exists as Environment variable
-  value=$(printf '%s\n' "${!varname}")
-  # Otherwise use value from .env file
-  [[ -z $value ]] && value=${varvalue}
-  
-  # Append configuration property to JS file
-  if [[ "$value" == "true" ]] || [[ "$value" == "false" ]]; then
-    echo "  $varname: $value," >> ./env-config.js
-  else
-    echo "  $varname: \"$value\"," >> ./env-config.js
+    value="${!varname}"
+    if [ -z "$value" ]; then
+      value="$varvalue"
+    fi
+    if [[ "$value" == "true" ]] || [[ "$value" == "false" ]]; then
+      echo "    $varname: $value," >> ./env-config.js
+    else
+      echo "    $varname: \"$value\"," >> ./env-config.js
+    fi
   fi
 done < .env
-echo "}" >> ./env-config.js
+
+# Kết thúc object window._env_
+echo "  };" >> ./env-config.js
+
+# Thêm logic shim để ánh xạ window._env_ sang process.env
+echo "  if (!window._env_) {" >> ./env-config.js
+echo "    console.warn('window._env_ is not defined, falling back to defaults');" >> ./env-config.js
+echo "    window._env_ = {};" >> ./env-config.js
+echo "  }" >> ./env-config.js
+echo "  window.process = window.process || {};" >> ./env-config.js
+echo "  window.process.env = window.process.env || {};" >> ./env-config.js
+echo "  Object.assign(window.process.env, window._env_);" >> ./env-config.js
+
+# Kết thúc IIFE
+echo "})();" >> ./env-config.js
