@@ -30,6 +30,10 @@ deployment:
   env:
     REACT_APP_BASE_API_URL: "http://api-shopnow.ndthang.live/api/"
 
+  containerSecurityContext:
+    capabilities:
+      add: ["NET_BIND_SERVICE"]
+
   # Image of the app container
   image:
     repository: harbor.rnd.com/shopnow/frontend
