@@ -23,7 +23,7 @@ spec:
       namespace: shopnow-frontend
     spec:
       containers:
-        - image: harbor.rnd.com/shopnow/frontend:v1
+        - image: harbor.rnd.com/shopnow/frontend:v3
           imagePullPolicy: Always
           name: shopnow-frontend
           ports:
