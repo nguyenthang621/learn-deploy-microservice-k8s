@@ -68,43 +68,10 @@ deployment:
   # Networking using the host network
   hostNetwork: true
 
-  openshiftOAuthProxy:
-    enabled: false
-    port: 8080
-    secretName: "openshift-oauth-proxy-tls"
-
-  # Startup, Readiness and Liveness probes
-  startupProbe:
-    enabled: false
-    failureThreshold: 30
-    periodSeconds: 10
-    httpGet:
-      path: "/path"
-      port: 8080
-    exec: {}
-
-  readinessProbe:
-    enabled: false
-    failureThreshold: 3
-    periodSeconds: 10
-    successThreshold: 1
-    timeoutSeconds: 1
-    initialDelaySeconds: 10
-    exec:
-      command:
-        - cat
-        - tmp/healthy
-
-  livenessProbe:
-    enabled: false
-    failureThreshold: 3
-    periodSeconds: 10
-    successThreshold: 1
-    timeoutSeconds: 1
-    initialDelaySeconds: 10
-    httpGet:
-      path: /path
-      port: 8080
+  envFrom:
+    code-config:
+      type: "configmap"
+      nameSuffix: "env-config"
 
 # Service object for servicing pods
 service:
@@ -135,67 +102,7 @@ ingress:
 
 # Additional ConfigMaps
 configMap:
-  enabled: false
-  additionalLabels:
-    key: value
-  annotations:
-    # key: value
+  enabled: true
   files:
-    code-config:
-      key1: value1
-      key2: value2
-    dev-config:
-      key1: value1
-      key2: value2
-
-# Add Storage volumes to the pods
-persistence:
-  enabled: false
-  mountPVC: false
-  mountPath: "/"
-  name: ""
-  accessMode: ReadWriteOnce
-  ## If defined, storageClass: <storageClass>
-  ## If set to "-", storageClass: "", which disables dynamic provisioning
-  ## If undefined (the default) or set to null, no storageClass spec is
-  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-  ##   GKE, AWS & OpenStack)
-  ##
-  storageClass: "-"
-  additionalLabels:
-    key: "value"
-
-  annotations:
-  #  "helm.sh/resource-policy": keep
-  storageSize: 8Gi
-  volumeMode: "Filesystem"
-  volumeName: ""
-
-# autoscaling is used for horizonal pod autoscaling
-autoscaling:
-  # enabled is a boolean flag for enabling or disabling autoscaling
-  enabled: false
-  # additionalLabels defines additional labels
-  additionalLabels:
-    key: value
-  # annotations defines annotations in key value pair
-  annotations:
-    # key: value
-  # minReplicas sets the minimum number of replicas
-  minReplicas: 1
-  # maxReplicas sets the maximum number of replicas
-  maxReplicas: 10
-  # metrics is the list of metrics used for hpa
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 60
-    - type: Resource
-      resource:
-        name: memory
-        target:
-          type: Utilization
-          averageUtilization: 60
+    env-config:
+      REACT_APP_BASE_API_URL: "http://api-shopnow.ndthang.live/api123/"
