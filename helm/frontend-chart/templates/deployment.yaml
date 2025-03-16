@@ -5,48 +5,48 @@ kind: Deployment
 metadata:
   labels:
   {{- include "application.labels" $ | nindent 4 }}
-{{- if .Values.deployment.additionalLabels }}
+  {{- if and (hasKey .Values.deployment "additionalLabels") .Values.deployment.additionalLabels }}
 {{ toYaml .Values.deployment.additionalLabels | indent 4 }}
-{{- end }}
-{{- if or .Values.deployment.annotations .Values.deployment.reloadOnChange }}
+  {{- end }}
+  {{- if or (and (hasKey .Values.deployment "annotations") .Values.deployment.annotations) .Values.deployment.reloadOnChange }}
   annotations:
-{{- end }}
-{{- if .Values.deployment.annotations }}
+  {{- end }}
+  {{- if and (hasKey .Values.deployment "annotations") .Values.deployment.annotations }}
 {{ toYaml .Values.deployment.annotations | indent 4 }}
-{{- end }}
-{{- if .Values.deployment.reloadOnChange }}
+  {{- end }}
+  {{- if .Values.deployment.reloadOnChange }}
     reloader.stakater.com/auto: "true"
-{{- end }}
+  {{- end }}
   name: {{ template "application.name" . }}
   namespace: {{ include "application.namespace" . }}
 spec:
-{{- if not (eq .Values.deployment.replicas nil) }}
+  {{- if and (hasKey .Values.deployment "replicas") (not (eq .Values.deployment.replicas nil)) }}
   replicas: {{ .Values.deployment.replicas }}
-{{- end }}
+  {{- end }}
   selector:
     matchLabels:
 {{ include "application.selectorLabels" . | indent 6 }}
-  {{- if .Values.deployment.strategy }}
+  {{- if and (hasKey .Values.deployment "strategy") .Values.deployment.strategy }}
   strategy:
 {{ toYaml .Values.deployment.strategy | indent 4 }}
   {{- end }}
-  {{- if not (kindIs "invalid" .Values.deployment.revisionHistoryLimit) }}
+  {{- if and (hasKey .Values.deployment "revisionHistoryLimit") (not (kindIs "invalid" .Values.deployment.revisionHistoryLimit)) }}
   revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
   {{- end }}
   template:
     metadata:
       labels:
 {{ include "application.selectorLabels" . | indent 8 }}
-{{- if .Values.deployment.podLabels }}
+      {{- if and (hasKey .Values.deployment "podLabels") .Values.deployment.podLabels }}
 {{ toYaml .Values.deployment.podLabels | indent 8 }}
-{{- end }}
-{{- if or .Values.deployment.additionalPodAnnotations .Values.deployment.fluentdConfigAnnotations }}
+      {{- end }}
+      {{- if or (and (hasKey .Values.deployment "additionalPodAnnotations") .Values.deployment.additionalPodAnnotations) (and (hasKey .Values.deployment "fluentdConfigAnnotations") .Values.deployment.fluentdConfigAnnotations) }}
       annotations:
-{{- end }}
-{{- with .Values.deployment.additionalPodAnnotations }}
-{{ toYaml . | indent 8 }}
-{{- end }}
-{{- if .Values.deployment.fluentdConfigAnnotations }}
+      {{- end }}
+      {{- if and (hasKey .Values.deployment "additionalPodAnnotations") .Values.deployment.additionalPodAnnotations }}
+{{ toYaml .Values.deployment.additionalPodAnnotations | indent 8 }}
+      {{- end }}
+      {{- if and (hasKey .Values.deployment "fluentdConfigAnnotations") .Values.deployment.fluentdConfigAnnotations }}
         fluentdConfiguration: >
           [
             {
@@ -58,110 +58,109 @@ spec:
                   "timeFormat": "{{ .Values.deployment.fluentdConfigAnnotations.timeFormat }}",
                   "containerName": "{{ template "application.name" . }}"
                 }
-              ]{{- with .Values.deployment.fluentdConfigAnnotations.notifications }},
-              "notifications": {
-                {{- with .slack }}
+              ]
+              {{- if and (hasKey .Values.deployment.fluentdConfigAnnotations "notifications") .Values.deployment.fluentdConfigAnnotations.notifications }}
+              , "notifications": {
+                {{- with .Values.deployment.fluentdConfigAnnotations.notifications.slack }}
                 "slack": {
                   "webhookURL": "{{ .webhookURL }}",
                   "channelName": "{{ .channelName }}"
                 },
                 {{- end }}
-                "key": "{{ .key }}",
-                "pattern": "{{ .pattern }}"
+                "key": "{{ .Values.deployment.fluentdConfigAnnotations.notifications.key }}",
+                "pattern": "{{ .Values.deployment.fluentdConfigAnnotations.notifications.pattern }}"
               }
               {{- end }}
             }
           ]
-{{- end }}
+      {{- end }}
     spec:
-      {{- if .Values.deployment.hostAliases }}
+      {{- if and (hasKey .Values.deployment "hostAliases") .Values.deployment.hostAliases }}
       hostAliases:
 {{ toYaml .Values.deployment.hostAliases | indent 6 }}
       {{- end }}
-      {{- if .Values.deployment.initContainers }}
+      {{- if and (hasKey .Values.deployment "initContainers") .Values.deployment.initContainers }}
       initContainers:
-  {{- range $key, $value := .Values.deployment.initContainers }}
+      {{- range $key, $value := .Values.deployment.initContainers }}
       - name: {{ $key }}
 {{ include "application.tplvalues.render" ( dict "value" $value "context" $ ) | indent 8 }}
       {{- end }}
       {{- end }}
-      {{- if .Values.deployment.nodeSelector }}
+      {{- if and (hasKey .Values.deployment "nodeSelector") .Values.deployment.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.deployment.nodeSelector | indent 8 }}
       {{- end }}
-      {{- with .Values.deployment.priorityClassName }}
-      priorityClassName: {{ . }}
+      {{- if and (hasKey .Values.deployment "priorityClassName") .Values.deployment.priorityClassName }}
+      priorityClassName: {{ .Values.deployment.priorityClassName }}
       {{- end }}
-      {{- if .Values.deployment.tolerations }}
+      {{- if and (hasKey .Values.deployment "tolerations") .Values.deployment.tolerations }}
       tolerations:
-{{ toYaml .Values.deployment.tolerations | indent 8 -}}
+{{ toYaml .Values.deployment.tolerations | indent 8 }}
       {{- end }}
-      {{- if .Values.deployment.affinity }}
+      {{- if and (hasKey .Values.deployment "affinity") .Values.deployment.affinity }}
       affinity:
-{{ toYaml .Values.deployment.affinity | indent 8 -}}
+{{ toYaml .Values.deployment.affinity | indent 8 }}
       {{- end }}
-      {{- with .Values.deployment.topologySpreadConstraints }}
+      {{- if and (hasKey .Values.deployment "topologySpreadConstraints") .Values.deployment.topologySpreadConstraints }}
       topologySpreadConstraints:
-        {{- toYaml . | nindent 8 }}
+{{ toYaml .Values.deployment.topologySpreadConstraints | indent 8 }}
       {{- end }}
-      {{- with .Values.deployment.imagePullSecrets }}
+      {{- if and (hasKey .Values.deployment "imagePullSecrets") .Values.deployment.imagePullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+{{ toYaml .Values.deployment.imagePullSecrets | indent 8 }}
       {{- end }}
       containers:
-        {{- if .Values.deployment.openshiftOAuthProxy.enabled }}
-      - args:
-        {{- if .Values.deployment.openshiftOAuthProxy.disableTLSArg }}
-        - --http-address=:8081
-        {{- else }}
-        - --https-address=:8443
-        {{- end }}
-        - --provider=openshift
-        - --upstream=http://localhost:{{ .Values.deployment.openshiftOAuthProxy.port }}
-        - --openshift-service-account={{ template "application.name" . }}
-        - --tls-cert=/etc/tls/private/tls.crt
-        - --tls-key=/etc/tls/private/tls.key
-        - --cookie-secret=SECRET
-        image: {{ .Values.deployment.openshiftOAuthProxy.image | default "openshift/oauth-proxy:latest" }}
-        imagePullPolicy: IfNotPresent
-        name: oauth-proxy
-        ports:
-        {{- if .Values.deployment.openshiftOAuthProxy.disableTLSArg }}
-        - containerPort: 8081
-        {{- else }}
-        - containerPort: 8443
-        {{- end }}
-          name: proxy
-        volumeMounts:
-        - mountPath: /etc/tls/private
-          name: proxy-tls
+        {{- if and (hasKey .Values.deployment "openshiftOAuthProxy") .Values.deployment.openshiftOAuthProxy.enabled }}
+        - args:
+          {{- if .Values.deployment.openshiftOAuthProxy.disableTLSArg }}
+          - --http-address=:8081
+          {{- else }}
+          - --https-address=:8443
+          {{- end }}
+          - --provider=openshift
+          - --upstream=http://localhost:{{ .Values.deployment.openshiftOAuthProxy.port }}
+          - --openshift-service-account={{ template "application.name" . }}
+          - --tls-cert=/etc/tls/private/tls.crt
+          - --tls-key=/etc/tls/private/tls.key
+          - --cookie-secret=SECRET
+          image: {{ .Values.deployment.openshiftOAuthProxy.image | default "openshift/oauth-proxy:latest" }}
+          imagePullPolicy: IfNotPresent
+          name: oauth-proxy
+          ports:
+          {{- if .Values.deployment.openshiftOAuthProxy.disableTLSArg }}
+          - containerPort: 8081
+          {{- else }}
+          - containerPort: 8443
+          {{- end }}
+            name: proxy
+          volumeMounts:
+          - mountPath: /etc/tls/private
+            name: proxy-tls
         {{- end }}
       - name: {{ template "application.name" . }}
-
         {{- $image := required "Undefined image for application container" .Values.deployment.image.repository }}
-        {{- with .Values.deployment.image.tag    }} {{- $image = print $image ":" . }} {{- end }}
+        {{- with .Values.deployment.image.tag }} {{- $image = print $image ":" . }} {{- end }}
         {{- with .Values.deployment.image.digest }} {{- $image = print $image "@" . }} {{- end }}
         image: {{ $image }}
-
         imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
-        {{- with .Values.deployment.lifecycle }}
+        {{- if and (hasKey .Values.deployment "lifecycle") .Values.deployment.lifecycle }}
         lifecycle:
-          {{- toYaml . | nindent 10 }}
+{{ toYaml .Values.deployment.lifecycle | indent 10 }}
         {{- end }}
-        {{- if .Values.deployment.command }}
+        {{- if and (hasKey .Values.deployment "command") .Values.deployment.command }}
         command: {{- include "application.tplvalues.render" (dict "value" .Values.deployment.command "context" $) | nindent 12 }}
         {{- end }}
-        {{- if .Values.deployment.args }}
+        {{- if and (hasKey .Values.deployment "args") .Values.deployment.args }}
         args: {{- include "application.tplvalues.render" (dict "value" .Values.deployment.args "context" $) | nindent 12 }}
         {{- end }}
-        {{- if .Values.deployment.ports }}
+        {{- if and (hasKey .Values.deployment "ports") .Values.deployment.ports }}
         ports:
 {{ toYaml .Values.deployment.ports | indent 10 }}
         {{- end }}
-        {{- if .Values.deployment.envFrom }}
+        {{- if and (hasKey .Values.deployment "envFrom") .Values.deployment.envFrom }}
         envFrom:
         {{- range $value := .Values.deployment.envFrom }}
-        {{- if (eq .type "configmap") }}
+        {{- if eq .type "configmap" }}
         - configMapRef:
             {{- if .name }}
             name: {{ include "application.tplvalues.render" ( dict "value" $value.name "context" $ ) }}
@@ -171,7 +170,7 @@ spec:
             name: {{ template "application.name" $ }}
             {{- end }}
         {{- end }}
-        {{- if (eq .type "secret") }}
+        {{- if eq .type "secret" }}
         - secretRef:
             {{- if .name }}
             name: {{ include "application.tplvalues.render" ( dict "value" $value.name "context" $ ) }}
@@ -183,23 +182,14 @@ spec:
         {{- end }}
         {{- end }}
         {{- end }}
-        {{- if .Values.deployment.env }}
-#         env:
-#         {{- range $key, $value := .Values.deployment.env }}
-#         - name: {{ include "application.tplvalues.render" ( dict "value" $key "context" $ ) }}
-# {{ include "application.tplvalues.render" ( dict "value" $value "context" $ ) | indent 10 }}
-#         {{- end }}
-#         {{- end }}
-
+        {{- if and (hasKey .Values.deployment "env") .Values.deployment.env }}
         env:
-          {{- if .Values.deployment.env }}
-          {{- range $key, $value := .Values.deployment.env }}
-          - name: {{ $key | quote }}
-            value: {{ $value | quote }}
-          {{- end }}
-          {{- end }}
-
-        {{- if .Values.deployment.startupProbe.enabled }}
+        {{- range $key, $value := .Values.deployment.env }}
+        - name: {{ $key | quote }}
+          value: {{ $value | quote }}
+        {{- end }}
+        {{- end }}
+        {{- if and (hasKey .Values.deployment "startupProbe") .Values.deployment.startupProbe.enabled }}
         startupProbe:
           failureThreshold: {{ .Values.deployment.startupProbe.failureThreshold }}
           periodSeconds: {{ .Values.deployment.startupProbe.periodSeconds }}
@@ -208,19 +198,19 @@ spec:
           initialDelaySeconds: {{ .Values.deployment.startupProbe.initialDelaySeconds }}
           {{- if .Values.deployment.startupProbe.exec }}
           exec:
-            {{- toYaml .Values.deployment.startupProbe.exec | nindent 12 }}
+{{ toYaml .Values.deployment.startupProbe.exec | indent 12 }}
           {{- else if .Values.deployment.startupProbe.httpGet }}
           httpGet:
-            {{- toYaml .Values.deployment.startupProbe.httpGet | nindent 12 }}
+{{ toYaml .Values.deployment.startupProbe.httpGet | indent 12 }}
           {{- else if .Values.deployment.startupProbe.tcpSocket }}
           tcpSocket:
-            {{- toYaml .Values.deployment.startupProbe.tcpSocket | nindent 12 }}
+{{ toYaml .Values.deployment.startupProbe.tcpSocket | indent 12 }}
           {{- else if .Values.deployment.startupProbe.grpc }}
           grpc:
-            {{- toYaml .Values.deployment.startupProbe.grpc | nindent 12 }}
+{{ toYaml .Values.deployment.startupProbe.grpc | indent 12 }}
           {{- end }}
         {{- end }}
-        {{- if .Values.deployment.livenessProbe.enabled }}
+        {{- if and (hasKey .Values.deployment "livenessProbe") .Values.deployment.livenessProbe.enabled }}
         livenessProbe:
           failureThreshold: {{ .Values.deployment.livenessProbe.failureThreshold }}
           periodSeconds: {{ .Values.deployment.livenessProbe.periodSeconds }}
@@ -229,19 +219,19 @@ spec:
           initialDelaySeconds: {{ .Values.deployment.livenessProbe.initialDelaySeconds }}
           {{- if .Values.deployment.livenessProbe.exec }}
           exec:
-            {{- toYaml .Values.deployment.livenessProbe.exec | nindent 12 }}
+{{ toYaml .Values.deployment.livenessProbe.exec | indent 12 }}
           {{- else if .Values.deployment.livenessProbe.httpGet }}
           httpGet:
-            {{- toYaml .Values.deployment.livenessProbe.httpGet | nindent 12 }}
+{{ toYaml .Values.deployment.livenessProbe.httpGet | indent 12 }}
           {{- else if .Values.deployment.livenessProbe.tcpSocket }}
           tcpSocket:
-            {{- toYaml .Values.deployment.livenessProbe.tcpSocket | nindent 12 }}
+{{ toYaml .Values.deployment.livenessProbe.tcpSocket | indent 12 }}
           {{- else if .Values.deployment.livenessProbe.grpc }}
           grpc:
-            {{- toYaml .Values.deployment.livenessProbe.grpc | nindent 12 }}
+{{ toYaml .Values.deployment.livenessProbe.grpc | indent 12 }}
           {{- end }}
         {{- end }}
-        {{- if .Values.deployment.readinessProbe.enabled }}
+        {{- if and (hasKey .Values.deployment "readinessProbe") .Values.deployment.readinessProbe.enabled }}
         readinessProbe:
           failureThreshold: {{ .Values.deployment.readinessProbe.failureThreshold }}
           periodSeconds: {{ .Values.deployment.readinessProbe.periodSeconds }}
@@ -250,85 +240,85 @@ spec:
           initialDelaySeconds: {{ .Values.deployment.readinessProbe.initialDelaySeconds }}
           {{- if .Values.deployment.readinessProbe.exec }}
           exec:
-            {{- toYaml .Values.deployment.readinessProbe.exec | nindent 12 }}
+{{ toYaml .Values.deployment.readinessProbe.exec | indent 12 }}
           {{- else if .Values.deployment.readinessProbe.httpGet }}
           httpGet:
-            {{- toYaml .Values.deployment.readinessProbe.httpGet | nindent 12 }}
+{{ toYaml .Values.deployment.readinessProbe.httpGet | indent 12 }}
           {{- else if .Values.deployment.readinessProbe.tcpSocket }}
           tcpSocket:
-            {{- toYaml .Values.deployment.readinessProbe.tcpSocket | nindent 12 }}
+{{ toYaml .Values.deployment.readinessProbe.tcpSocket | indent 12 }}
           {{- else if .Values.deployment.readinessProbe.grpc }}
           grpc:
-            {{- toYaml .Values.deployment.readinessProbe.grpc | nindent 12 }}
+{{ toYaml .Values.deployment.readinessProbe.grpc | indent 12 }}
           {{- end }}
         {{- end }}
-      {{- if or (.Values.deployment.volumeMounts) (and (eq .Values.persistence.enabled true) (eq .Values.persistence.mountPVC true) )}}
+        {{- if or (and (hasKey .Values.deployment "volumeMounts") .Values.deployment.volumeMounts) (and .Values.persistence.enabled .Values.persistence.mountPVC) }}
         volumeMounts:
-        {{- if (eq .Values.persistence.mountPVC true) }}
+        {{- if and .Values.persistence.enabled .Values.persistence.mountPVC }}
         - mountPath: {{ .Values.persistence.mountPath }}
           name: {{ template "application.name" . }}-data
         {{- end }}
-        {{- if .Values.deployment.volumeMounts }}
+        {{- if and (hasKey .Values.deployment "volumeMounts") .Values.deployment.volumeMounts }}
         {{- range $key, $value := .Values.deployment.volumeMounts }}
         - name: {{ $key }}
-{{  include "application.tplvalues.render" ( dict "value" $value "context" $ ) | indent 10 }}
+{{ include "application.tplvalues.render" ( dict "value" $value "context" $ ) | indent 10 }}
         {{- end }}
         {{- end }}
-      {{- end }}
-        {{- with .Values.deployment.resources }}
+        {{- end }}
+        {{- if and (hasKey .Values.deployment "resources") .Values.deployment.resources }}
         resources:
-          {{- toYaml . | nindent 10 }}
+{{ toYaml .Values.deployment.resources | indent 10 }}
         {{- end }}
-        {{- if .Values.deployment.containerSecurityContext }}
+        {{- if and (hasKey .Values.deployment "containerSecurityContext") .Values.deployment.containerSecurityContext }}
         securityContext:
 {{ toYaml .Values.deployment.containerSecurityContext | indent 10 }}
         {{- end }}
-        {{- if .Values.deployment.additionalContainers }}
+        {{- if and (hasKey .Values.deployment "additionalContainers") .Values.deployment.additionalContainers }}
 {{ toYaml .Values.deployment.additionalContainers | indent 6 }}
         {{- end }}
-        {{- if .Values.deployment.securityContext }}
+        {{- if and (hasKey .Values.deployment "securityContext") .Values.deployment.securityContext }}
       securityContext:
 {{ toYaml .Values.deployment.securityContext | indent 8 }}
-          {{- end }}
-      {{- if .Values.deployment.dnsConfig }}
+        {{- end }}
+        {{- if and (hasKey .Values.deployment "dnsConfig") .Values.deployment.dnsConfig }}
       dnsConfig:
 {{ toYaml .Values.deployment.dnsConfig | indent 8 }}
-          {{- end }}
-      {{- if .Values.deployment.dnsPolicy }}
+        {{- end }}
+        {{- if and (hasKey .Values.deployment "dnsPolicy") .Values.deployment.dnsPolicy }}
       dnsPolicy: {{ .Values.deployment.dnsPolicy }}
-      {{- end }}
-      {{- if or (.Values.deployment.openshiftOAuthProxy.enabled) (.Values.deployment.volumes) (and (eq .Values.persistence.enabled true) (eq .Values.persistence.mountPVC true) )}}
+        {{- end }}
+        {{- if or (and (hasKey .Values.deployment "openshiftOAuthProxy") .Values.deployment.openshiftOAuthProxy.enabled) (and (hasKey .Values.deployment "volumes") .Values.deployment.volumes) (and .Values.persistence.enabled .Values.persistence.mountPVC) }}
       volumes:
-        {{- if .Values.deployment.openshiftOAuthProxy.enabled }}
-      - name: proxy-tls
-        secret:
-          secretName: {{ .Values.deployment.openshiftOAuthProxy.secretName }}
+        {{- if and (hasKey .Values.deployment "openshiftOAuthProxy") .Values.deployment.openshiftOAuthProxy.enabled }}
+        - name: proxy-tls
+          secret:
+            secretName: {{ .Values.deployment.openshiftOAuthProxy.secretName }}
         {{- end }}
-        {{- if (eq .Values.persistence.mountPVC true) }}
-      - name: {{ template "application.name" . }}-data
-        persistentVolumeClaim:
-          {{- if .Values.persistence.name }}
-          claimName: {{ .Values.persistence.name }}
-          {{- else }}
-          claimName: {{ template "application.name" . }}-data
-          {{- end }}
+        {{- if and .Values.persistence.enabled .Values.persistence.mountPVC }}
+        - name: {{ template "application.name" . }}-data
+          persistentVolumeClaim:
+            {{- if .Values.persistence.name }}
+            claimName: {{ .Values.persistence.name }}
+            {{- else }}
+            claimName: {{ template "application.name" . }}-data
+            {{- end }}
         {{- end }}
-        {{- if .Values.deployment.volumes }}
+        {{- if and (hasKey .Values.deployment "volumes") .Values.deployment.volumes }}
         {{- range $key, $value := .Values.deployment.volumes }}
-      - name: {{ $key }}
+        - name: {{ $key }}
 {{ include "application.tplvalues.render" ( dict "value" $value "context" $ ) | indent 8 }}
         {{- end }}
         {{- end }}
-      {{- end }}
-      {{- if .Values.rbac.serviceAccount.enabled }}
-      {{- if .Values.rbac.serviceAccount.name }}
+        {{- end }}
+        {{- if and (hasKey .Values.rbac "serviceAccount") .Values.rbac.serviceAccount.enabled }}
+        {{- if .Values.rbac.serviceAccount.name }}
       serviceAccountName: {{ .Values.rbac.serviceAccount.name }}
-      {{- else }}
+        {{- else }}
       serviceAccountName: {{ template "application.name" $ }}
-      {{- end }}
-      {{- end }}
-      {{- if .Values.deployment.hostNetwork }}
+        {{- end }}
+        {{- end }}
+        {{- if and (hasKey .Values.deployment "hostNetwork") .Values.deployment.hostNetwork }}
       hostNetwork: {{ .Values.deployment.hostNetwork }}
-      {{- end }}
+        {{- end }}
       terminationGracePeriodSeconds: {{ .Values.deployment.terminationGracePeriodSeconds }}
 {{- end }}
