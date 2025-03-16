@@ -7,47 +7,43 @@ metadata:
   namespace: {{ template "application.namespace" $ }}
   labels:
   {{- include "application.labels" $ | nindent 4 }}
-  {{- if .Values.service.additionalLabels }}
+  {{- if and (hasKey .Values.service "additionalLabels") .Values.service.additionalLabels }}
     {{- toYaml .Values.service.additionalLabels | nindent 4 }}
   {{- end }}
-  {{- if .Values.service.annotations }}
+  {{- if and (hasKey .Values.service "annotations") .Values.service.annotations }}
   annotations:
-    {{- include "application.tplvalues.render" ( dict "value" .Values.service.annotations  "context" $ ) | nindent 4 }}
-{{- end }}
+    {{- include "application.tplvalues.render" ( dict "value" .Values.service.annotations "context" $ ) | nindent 4 }}
+  {{- end }}
 spec:
-  type: {{ .Values.service.type }}
-{{- with .Values.service.clusterIP }}
-  clusterIP: {{ . }}
-{{- end }}
-{{- if eq .Values.service.type "LoadBalancer" }}
-  {{- with .Values.service.loadBalancerIP }}
-  loadBalancerIP: {{ . }}
+  type: {{ if hasKey .Values.service "type" }}{{ .Values.service.type }}{{ else }}"ClusterIP"{{ end }}
+  {{- if and (hasKey .Values.service "clusterIP") .Values.service.clusterIP }}
+  clusterIP: {{ .Values.service.clusterIP }}
   {{- end }}
-  {{- with .Values.service.loadBalancerSourceRanges }}
-  loadBalancerSourceRanges:
-    {{- toYaml . | nindent 4 }}
+  {{- if and (hasKey .Values.service "type") (eq .Values.service.type "LoadBalancer") }}
+    {{- if and (hasKey .Values.service "loadBalancerIP") .Values.service.loadBalancerIP }}
+    loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+    {{- end }}
+    {{- if and (hasKey .Values.service "loadBalancerSourceRanges") .Values.service.loadBalancerSourceRanges }}
+    loadBalancerSourceRanges:
+      {{- toYaml .Values.service.loadBalancerSourceRanges | nindent 4 }}
+    {{- end }}
   {{- end }}
-{{- end }}
-  {{- with .Values.service.externalIPs }}
+  {{- if and (hasKey .Values.service "externalIPs") .Values.service.externalIPs }}
   externalIPs:
-    {{- toYaml . | nindent 4 }}
+    {{- toYaml .Values.service.externalIPs | nindent 4 }}
   {{- end }}
   selector:
 {{ include "application.selectorLabels" . | indent 4 }}
-{{- if .Values.deployment.podLabels }}
+    {{- if and (hasKey .Values.deployment "podLabels") .Values.deployment.podLabels }}
 {{ toYaml .Values.deployment.podLabels | indent 4 }}
-{{- end }}
-  ports:
-  {{- if .Values.deployment.openshiftOAuthProxy.enabled }}
-  - name: proxy
-    port: 443
-    protocol: TCP
-    {{- if .Values.deployment.openshiftOAuthProxy.disableTLSArg }}
-    targetPort: 8081
-    {{- else }}
-    targetPort: 8443
     {{- end }}
-  {{- else }}
+  ports:
+    {{- if and (hasKey .Values.deployment "openshiftOAuthProxy") (hasKey .Values.deployment.openshiftOAuthProxy "enabled") .Values.deployment.openshiftOAuthProxy.enabled }}
+    - name: proxy
+      port: 443
+      protocol: TCP
+      targetPort: {{ if and (hasKey .Values.deployment.openshiftOAuthProxy "disableTLSArg") .Values.deployment.openshiftOAuthProxy.disableTLSArg }}8081{{ else }}8443{{ end }}
+    {{- else if and (hasKey .Values.service "ports") .Values.service.ports }}
 {{ toYaml .Values.service.ports | indent 4 }}
-  {{- end }}
+    {{- end }}
 {{- end }}
