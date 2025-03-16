@@ -8,13 +8,13 @@ metadata:
   {{- if and (hasKey .Values.deployment "additionalLabels") .Values.deployment.additionalLabels }}
 {{ toYaml .Values.deployment.additionalLabels | indent 4 }}
   {{- end }}
-  {{- if or (and (hasKey .Values.deployment "annotations") .Values.deployment.annotations) .Values.deployment.reloadOnChange }}
+  {{- if or (and (hasKey .Values.deployment "annotations") .Values.deployment.annotations) (and (hasKey .Values.deployment "reloadOnChange") .Values.deployment.reloadOnChange) }}
   annotations:
   {{- end }}
   {{- if and (hasKey .Values.deployment "annotations") .Values.deployment.annotations }}
 {{ toYaml .Values.deployment.annotations | indent 4 }}
   {{- end }}
-  {{- if .Values.deployment.reloadOnChange }}
+  {{- if and (hasKey .Values.deployment "reloadOnChange") .Values.deployment.reloadOnChange }}
     reloader.stakater.com/auto: "true"
   {{- end }}
   name: {{ template "application.name" . }}
@@ -110,9 +110,9 @@ spec:
 {{ toYaml .Values.deployment.imagePullSecrets | indent 8 }}
       {{- end }}
       containers:
-        {{- if and (hasKey .Values.deployment "openshiftOAuthProxy") .Values.deployment.openshiftOAuthProxy.enabled }}
+        {{- if and (hasKey .Values.deployment "openshiftOAuthProxy") (hasKey .Values.deployment.openshiftOAuthProxy "enabled") .Values.deployment.openshiftOAuthProxy.enabled }}
         - args:
-          {{- if .Values.deployment.openshiftOAuthProxy.disableTLSArg }}
+          {{- if and (hasKey .Values.deployment.openshiftOAuthProxy "disableTLSArg") .Values.deployment.openshiftOAuthProxy.disableTLSArg }}
           - --http-address=:8081
           {{- else }}
           - --https-address=:8443
@@ -127,7 +127,7 @@ spec:
           imagePullPolicy: IfNotPresent
           name: oauth-proxy
           ports:
-          {{- if .Values.deployment.openshiftOAuthProxy.disableTLSArg }}
+          {{- if and (hasKey .Values.deployment.openshiftOAuthProxy "disableTLSArg") .Values.deployment.openshiftOAuthProxy.disableTLSArg }}
           - containerPort: 8081
           {{- else }}
           - containerPort: 8443
@@ -139,8 +139,12 @@ spec:
         {{- end }}
       - name: {{ template "application.name" . }}
         {{- $image := required "Undefined image for application container" .Values.deployment.image.repository }}
-        {{- with .Values.deployment.image.tag }} {{- $image = print $image ":" . }} {{- end }}
-        {{- with .Values.deployment.image.digest }} {{- $image = print $image "@" . }} {{- end }}
+        {{- if and (hasKey .Values.deployment.image "tag") .Values.deployment.image.tag }}
+        {{- $image = print $image ":" .Values.deployment.image.tag }}
+        {{- end }}
+        {{- if and (hasKey .Values.deployment.image "digest") .Values.deployment.image.digest }}
+        {{- $image = print $image "@" .Values.deployment.image.digest }}
+        {{- end }}
         image: {{ $image }}
         imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
         {{- if and (hasKey .Values.deployment "lifecycle") .Values.deployment.lifecycle }}
@@ -160,21 +164,21 @@ spec:
         {{- if and (hasKey .Values.deployment "envFrom") .Values.deployment.envFrom }}
         envFrom:
         {{- range $value := .Values.deployment.envFrom }}
-        {{- if eq .type "configmap" }}
+        {{- if and (hasKey $value "type") (eq $value.type "configmap") }}
         - configMapRef:
-            {{- if .name }}
+            {{- if and (hasKey $value "name") $value.name }}
             name: {{ include "application.tplvalues.render" ( dict "value" $value.name "context" $ ) }}
-            {{- else if .nameSuffix }}
+            {{- else if and (hasKey $value "nameSuffix") $value.nameSuffix }}
             name: {{ template "application.name" $ }}-{{ include "application.tplvalues.render" ( dict "value" $value.nameSuffix "context" $ ) }}
             {{- else }}
             name: {{ template "application.name" $ }}
             {{- end }}
         {{- end }}
-        {{- if eq .type "secret" }}
+        {{- if and (hasKey $value "type") (eq $value.type "secret") }}
         - secretRef:
-            {{- if .name }}
+            {{- if and (hasKey $value "name") $value.name }}
             name: {{ include "application.tplvalues.render" ( dict "value" $value.name "context" $ ) }}
-            {{- else if .nameSuffix }}
+            {{- else if and (hasKey $value "nameSuffix") $value.nameSuffix }}
             name: {{ template "application.name" $ }}-{{ include "application.tplvalues.render" ( dict "value" $value.nameSuffix "context" $ ) }}
             {{- else }}
             name: {{ template "application.name" $ }}
@@ -189,72 +193,72 @@ spec:
           value: {{ $value | quote }}
         {{- end }}
         {{- end }}
-        {{- if and (hasKey .Values.deployment "startupProbe") .Values.deployment.startupProbe.enabled }}
+        {{- if and (hasKey .Values.deployment "startupProbe") (hasKey .Values.deployment.startupProbe "enabled") .Values.deployment.startupProbe.enabled }}
         startupProbe:
           failureThreshold: {{ .Values.deployment.startupProbe.failureThreshold }}
           periodSeconds: {{ .Values.deployment.startupProbe.periodSeconds }}
           successThreshold: {{ .Values.deployment.startupProbe.successThreshold }}
           timeoutSeconds: {{ .Values.deployment.startupProbe.timeoutSeconds }}
           initialDelaySeconds: {{ .Values.deployment.startupProbe.initialDelaySeconds }}
-          {{- if .Values.deployment.startupProbe.exec }}
+          {{- if and (hasKey .Values.deployment.startupProbe "exec") .Values.deployment.startupProbe.exec }}
           exec:
 {{ toYaml .Values.deployment.startupProbe.exec | indent 12 }}
-          {{- else if .Values.deployment.startupProbe.httpGet }}
+          {{- else if and (hasKey .Values.deployment.startupProbe "httpGet") .Values.deployment.startupProbe.httpGet }}
           httpGet:
 {{ toYaml .Values.deployment.startupProbe.httpGet | indent 12 }}
-          {{- else if .Values.deployment.startupProbe.tcpSocket }}
+          {{- else if and (hasKey .Values.deployment.startupProbe "tcpSocket") .Values.deployment.startupProbe.tcpSocket }}
           tcpSocket:
 {{ toYaml .Values.deployment.startupProbe.tcpSocket | indent 12 }}
-          {{- else if .Values.deployment.startupProbe.grpc }}
+          {{- else if and (hasKey .Values.deployment.startupProbe "grpc") .Values.deployment.startupProbe.grpc }}
           grpc:
 {{ toYaml .Values.deployment.startupProbe.grpc | indent 12 }}
           {{- end }}
         {{- end }}
-        {{- if and (hasKey .Values.deployment "livenessProbe") .Values.deployment.livenessProbe.enabled }}
+        {{- if and (hasKey .Values.deployment "livenessProbe") (hasKey .Values.deployment.livenessProbe "enabled") .Values.deployment.livenessProbe.enabled }}
         livenessProbe:
           failureThreshold: {{ .Values.deployment.livenessProbe.failureThreshold }}
           periodSeconds: {{ .Values.deployment.livenessProbe.periodSeconds }}
           successThreshold: {{ .Values.deployment.livenessProbe.successThreshold }}
           timeoutSeconds: {{ .Values.deployment.livenessProbe.timeoutSeconds }}
           initialDelaySeconds: {{ .Values.deployment.livenessProbe.initialDelaySeconds }}
-          {{- if .Values.deployment.livenessProbe.exec }}
+          {{- if and (hasKey .Values.deployment.livenessProbe "exec") .Values.deployment.livenessProbe.exec }}
           exec:
 {{ toYaml .Values.deployment.livenessProbe.exec | indent 12 }}
-          {{- else if .Values.deployment.livenessProbe.httpGet }}
+          {{- else if and (hasKey .Values.deployment.livenessProbe "httpGet") .Values.deployment.livenessProbe.httpGet }}
           httpGet:
 {{ toYaml .Values.deployment.livenessProbe.httpGet | indent 12 }}
-          {{- else if .Values.deployment.livenessProbe.tcpSocket }}
+          {{- else if and (hasKey .Values.deployment.livenessProbe "tcpSocket") .Values.deployment.livenessProbe.tcpSocket }}
           tcpSocket:
 {{ toYaml .Values.deployment.livenessProbe.tcpSocket | indent 12 }}
-          {{- else if .Values.deployment.livenessProbe.grpc }}
+          {{- else if and (hasKey .Values.deployment.livenessProbe "grpc") .Values.deployment.livenessProbe.grpc }}
           grpc:
 {{ toYaml .Values.deployment.livenessProbe.grpc | indent 12 }}
           {{- end }}
         {{- end }}
-        {{- if and (hasKey .Values.deployment "readinessProbe") .Values.deployment.readinessProbe.enabled }}
+        {{- if and (hasKey .Values.deployment "readinessProbe") (hasKey .Values.deployment.readinessProbe "enabled") .Values.deployment.readinessProbe.enabled }}
         readinessProbe:
           failureThreshold: {{ .Values.deployment.readinessProbe.failureThreshold }}
           periodSeconds: {{ .Values.deployment.readinessProbe.periodSeconds }}
           successThreshold: {{ .Values.deployment.readinessProbe.successThreshold }}
           timeoutSeconds: {{ .Values.deployment.readinessProbe.timeoutSeconds }}
           initialDelaySeconds: {{ .Values.deployment.readinessProbe.initialDelaySeconds }}
-          {{- if .Values.deployment.readinessProbe.exec }}
+          {{- if and (hasKey .Values.deployment.readinessProbe "exec") .Values.deployment.readinessProbe.exec }}
           exec:
 {{ toYaml .Values.deployment.readinessProbe.exec | indent 12 }}
-          {{- else if .Values.deployment.readinessProbe.httpGet }}
+          {{- else if and (hasKey .Values.deployment.readinessProbe "httpGet") .Values.deployment.readinessProbe.httpGet }}
           httpGet:
 {{ toYaml .Values.deployment.readinessProbe.httpGet | indent 12 }}
-          {{- else if .Values.deployment.readinessProbe.tcpSocket }}
+          {{- else if and (hasKey .Values.deployment.readinessProbe "tcpSocket") .Values.deployment.readinessProbe.tcpSocket }}
           tcpSocket:
 {{ toYaml .Values.deployment.readinessProbe.tcpSocket | indent 12 }}
-          {{- else if .Values.deployment.readinessProbe.grpc }}
+          {{- else if and (hasKey .Values.deployment.readinessProbe "grpc") .Values.deployment.readinessProbe.grpc }}
           grpc:
 {{ toYaml .Values.deployment.readinessProbe.grpc | indent 12 }}
           {{- end }}
         {{- end }}
-        {{- if or (and (hasKey .Values.deployment "volumeMounts") .Values.deployment.volumeMounts) (and .Values.persistence.enabled .Values.persistence.mountPVC) }}
+        {{- if or (and (hasKey .Values.deployment "volumeMounts") .Values.deployment.volumeMounts) (and (hasKey .Values "persistence") (hasKey .Values.persistence "enabled") .Values.persistence.enabled (hasKey .Values.persistence "mountPVC") .Values.persistence.mountPVC) }}
         volumeMounts:
-        {{- if and .Values.persistence.enabled .Values.persistence.mountPVC }}
+        {{- if and (hasKey .Values "persistence") (hasKey .Values.persistence "enabled") .Values.persistence.enabled (hasKey .Values.persistence "mountPVC") .Values.persistence.mountPVC }}
         - mountPath: {{ .Values.persistence.mountPath }}
           name: {{ template "application.name" . }}-data
         {{- end }}
@@ -287,17 +291,17 @@ spec:
         {{- if and (hasKey .Values.deployment "dnsPolicy") .Values.deployment.dnsPolicy }}
       dnsPolicy: {{ .Values.deployment.dnsPolicy }}
         {{- end }}
-        {{- if or (and (hasKey .Values.deployment "openshiftOAuthProxy") .Values.deployment.openshiftOAuthProxy.enabled) (and (hasKey .Values.deployment "volumes") .Values.deployment.volumes) (and .Values.persistence.enabled .Values.persistence.mountPVC) }}
+        {{- if or (and (hasKey .Values.deployment "openshiftOAuthProxy") (hasKey .Values.deployment.openshiftOAuthProxy "enabled") .Values.deployment.openshiftOAuthProxy.enabled) (and (hasKey .Values.deployment "volumes") .Values.deployment.volumes) (and (hasKey .Values "persistence") (hasKey .Values.persistence "enabled") .Values.persistence.enabled (hasKey .Values.persistence "mountPVC") .Values.persistence.mountPVC) }}
       volumes:
-        {{- if and (hasKey .Values.deployment "openshiftOAuthProxy") .Values.deployment.openshiftOAuthProxy.enabled }}
+        {{- if and (hasKey .Values.deployment "openshiftOAuthProxy") (hasKey .Values.deployment.openshiftOAuthProxy "enabled") .Values.deployment.openshiftOAuthProxy.enabled }}
         - name: proxy-tls
           secret:
             secretName: {{ .Values.deployment.openshiftOAuthProxy.secretName }}
         {{- end }}
-        {{- if and .Values.persistence.enabled .Values.persistence.mountPVC }}
+        {{- if and (hasKey .Values "persistence") (hasKey .Values.persistence "enabled") .Values.persistence.enabled (hasKey .Values.persistence "mountPVC") .Values.persistence.mountPVC }}
         - name: {{ template "application.name" . }}-data
           persistentVolumeClaim:
-            {{- if .Values.persistence.name }}
+            {{- if and (hasKey .Values.persistence "name") .Values.persistence.name }}
             claimName: {{ .Values.persistence.name }}
             {{- else }}
             claimName: {{ template "application.name" . }}-data
@@ -310,8 +314,8 @@ spec:
         {{- end }}
         {{- end }}
         {{- end }}
-        {{- if and (hasKey .Values.rbac "serviceAccount") .Values.rbac.serviceAccount.enabled }}
-        {{- if .Values.rbac.serviceAccount.name }}
+        {{- if and (hasKey .Values "rbac") (hasKey .Values.rbac "serviceAccount") (hasKey .Values.rbac.serviceAccount "enabled") .Values.rbac.serviceAccount.enabled }}
+        {{- if and (hasKey .Values.rbac.serviceAccount "name") .Values.rbac.serviceAccount.name }}
       serviceAccountName: {{ .Values.rbac.serviceAccount.name }}
         {{- else }}
       serviceAccountName: {{ template "application.name" $ }}
