@@ -27,8 +27,8 @@ deployment:
 
   # Replicas to be created
   replicas: 1
-  env:
-    REACT_APP_BASE_API_URL: "http://api-shopnow.ndthang.live/api/"
+  # env:
+  #   REACT_APP_BASE_API_URL: "http://api-shopnow.ndthang.live/api/"
 
   containerSecurityContext:
     capabilities:
