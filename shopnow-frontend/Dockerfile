@@ -26,7 +26,6 @@ COPY --from=builder  /app/.env .
 RUN chmod +x env.sh
 # USER ndthang
 EXPOSE 80
-RUN sed -i "/<\/body>/i <script src=\"\/env-config.js\"><\/script>" /usr/share/nginx/html/index.html
 
 CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]
 

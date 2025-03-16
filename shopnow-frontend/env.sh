@@ -47,3 +47,9 @@ do
   fi
 done < .env
 echo "}" >> ./env-config.js
+
+awk '/<\/body>/ {
+    print "<script src=\"/env-config.js\"></script>";
+    print;
+    next
+}1' /usr/share/nginx/html/index.html > /usr/share/nginx/html/index_tmp.html && mv /usr/share/nginx/html/index_tmp.html /usr/share/nginx/html/index.html
