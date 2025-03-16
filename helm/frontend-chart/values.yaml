@@ -148,6 +148,29 @@ configMap:
       key1: value1
       key2: value2
 
+# Add Storage volumes to the pods
+persistence:
+  enabled: false
+  mountPVC: false
+  mountPath: "/"
+  name: ""
+  accessMode: ReadWriteOnce
+  ## If defined, storageClass: <storageClass>
+  ## If set to "-", storageClass: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClass spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  storageClass: "-"
+  additionalLabels:
+    key: "value"
+
+  annotations:
+  #  "helm.sh/resource-policy": keep
+  storageSize: 8Gi
+  volumeMode: "Filesystem"
+  volumeName: ""
+
 # autoscaling is used for horizonal pod autoscaling
 autoscaling:
   # enabled is a boolean flag for enabling or disabling autoscaling
