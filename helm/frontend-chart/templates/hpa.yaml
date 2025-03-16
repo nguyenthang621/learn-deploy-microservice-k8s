@@ -1,3 +1,4 @@
+{{if hasKey .Values "autoscaling" }}
 {{- if and .Values.autoscaling.enabled .Values.deployment.enabled }}
 ---
 {{- if .Capabilities.APIVersions.Has "autoscaling/v2/HorizontalPodAutoscaler" }}
@@ -31,4 +32,5 @@ spec:
   behavior:
     {{- toYaml .Values.autoscaling.behavior | nindent 4 }}
   {{- end }}
+{{- end }}
 {{- end }}
