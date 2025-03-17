@@ -71,13 +71,9 @@ deployment:
   #     mountPath: /app/src/main/resources/application.properties
   #     subPath: application.properties
   volumes:
-    config-volume:
-      configMap:
-        name: shopnow-discovery-server-application-properties-configmap
-        # defaultMode: 420
-    configmap-volume:
-      configMap:
-        name: '{{ template "application.name" . }}-application-properties-configmap'
+    - configmap-volume:
+        configMap:
+          name: '{{ template "application.name" . }}-application-properties-configmap'
 
 # Additional ConfigMaps
 configMap:
