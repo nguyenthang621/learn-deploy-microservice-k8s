@@ -70,12 +70,10 @@ deployment:
     shopnow-discovery-server-application-properties-config-volume:
       mountPath: /app/src/main/resources/application.properties
       subPath: application.properties
-
   volumes:
     configmap-volume:
       configMap:
         name: "shopnow-discovery-server-application-properties-config-volume"
-        defaultMode: 420
 
 # Additional ConfigMaps
 configMap:
