@@ -68,7 +68,7 @@ deployment:
 
   # Volumes to be added to the pod
   volumes:
-    shopnow-discovery-server-application-properties-config-volume:
+    shopnow-discovery-server-application.properties:
       configMap:
         name: "discovery-server-shopnow-application-properties-configmap"
         defaultMode: 420
@@ -83,12 +83,11 @@ deployment:
 configMap:
   enabled: true
   files:
-    application-properties-configmap:
-      application.properties: |
-        spring.application.name=discovery-server
-        server.port=8761
-        eureka.client.register-with-eureka=false
-        eureka.client.fetch-registry=false
+    application.properties: |
+      spring.application.name=discovery-server
+      server.port=8761
+      eureka.client.register-with-eureka=false
+      eureka.client.fetch-registry=false
 
 # Service object for servicing pods
 service:
