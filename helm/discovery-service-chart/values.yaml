@@ -77,17 +77,6 @@ deployment:
   #     configMap:
   #       name: "discovery-server-shopnow-application-properties-configmap"
 
-  # VolumeMounts: Mount ConfigMap vào container
-  volumeMounts:
-    config-volume:
-      mountPath: "/app/config"
-
-  # Volumes: Tham chiếu ConfigMap
-  volumes:
-    config-volume:
-      configMap:
-        name: "discovery-server-shopnow-application-properties-configmap"
-
 # Additional ConfigMaps
 configMap:
   enabled: true
