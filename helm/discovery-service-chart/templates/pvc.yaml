@@ -1,0 +1,61 @@
+{{ if hasKey .Values "persistence" }}
+{{- if and (.Values.persistence).enabled (not .Values.persistence.existingClaim) }}
+
+# Define PersistentVolume (PV) - Only create if has key pvname or nfs
+{{- if or .Values.persistence.pvName .Values.persistence.nfs }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.persistence.pvName | default (printf "%s-pv" (include "application.name" .)) }}
+  namespace: {{ include "application.namespace" . }}
+  labels:
+    {{- include "application.labels" . | nindent 4 }}
+  {{- if .Values.persistence.pvAnnotations }}
+  annotations:
+    {{ toYaml .Values.persistence.pvAnnotations | nindent 4 }}
+  {{- end }}
+spec:
+  capacity:
+    storage: {{ .Values.persistence.pvStorageSize | quote }}
+  accessModes:
+    - {{ .Values.persistence.accessMode | quote }}
+  persistentVolumeReclaimPolicy: {{ .Values.persistence.reclaimPolicy | default "Retain" }}
+  storageClassName: {{ .Values.persistence.storageClass | quote }}
+  {{- if .Values.persistence.nfs }}
+  nfs:
+    path: {{ .Values.persistence.nfs.path | quote }}
+    server: {{ .Values.persistence.nfs.server | quote }}
+  {{- end }}
+{{- end }}
+
+# Define PersistentVolumeClaim (PVC) - Always create if persistence.enabled
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.persistence.pvcName | default (printf "%s-pvc" (include "application.name" .)) }}
+  namespace: {{ include "application.namespace" . }}
+  labels:
+    {{- include "application.labels" . | nindent 4 }}
+  {{- if .Values.persistence.pvcAnnotations }}
+  annotations:
+    {{ toYaml .Values.persistence.pvcAnnotations | nindent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+    - {{ .Values.persistence.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.storageSize | quote }}
+  {{- if .Values.persistence.storageClass }}
+  storageClassName: {{ .Values.persistence.storageClass | quote }}
+  {{- else if not .Values.persistence.pvName }}
+  storageClassName: ""  # Không dùng StorageClass nếu không khai báo
+  {{- end }}
+  {{- if and .Values.persistence.pvName (not .Values.persistence.nfs) }}
+  volumeName: {{ .Values.persistence.pvName | quote }}  # Liên kết với PV cụ thể nếu chỉ định pvName mà không có NFS
+  {{- end }}
+
+{{- end }}
+{{- end }}
