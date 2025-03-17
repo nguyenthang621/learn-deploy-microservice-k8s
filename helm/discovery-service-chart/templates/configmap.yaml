@@ -1,4 +1,4 @@
-{{if hasKey .Values "configMap" }}
+{{ if hasKey .Values "configMap" }}
 {{- if (.Values.configMap).enabled }}
 {{- range $nameSuffix, $data := .Values.configMap.files }}
 ---
