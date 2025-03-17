@@ -66,25 +66,26 @@ deployment:
   # Networking using the host network
   hostNetwork: true
 
-  volumeMounts:
-    discovery-server-shopnow-application-properties-configmap:
-      mountPath: "/app/src/main/resources/application.properties"
-
-  volumes:
-    config-volume:
-      configMap:
-        name: "discovery-server-shopnow-application-properties-configmap"
-
-  # # Mount path for Volumes
+  # # # Mount path for Volumes
   # volumeMounts:
-  #   - name: config-volume
+  #   discovery-server-shopnow-application-properties-configmap:
   #     mountPath: "/app/src/main/resources/application.properties"
 
-  # # Volumes to be added to the pod
+  # # # Volumes to be added to the pod
   # volumes:
-  #   - name: config-volume
+  #   config-volume:
   #     configMap:
   #       name: "discovery-server-shopnow-application-properties-configmap"
+
+  volumeMounts:
+    shopnow-discovery-server-application-properties-config-volume:
+      mountPath: /app/src/main/resources/application.properties
+      subPath: application.properties
+  volumes:
+    shopnow-discovery-server-application-properties-config-volume:
+      configMap:
+        name: shopnow-discovery-server-application-properties-configmap
+        defaultMode: 420
 
 # Additional ConfigMaps
 configMap:
