@@ -310,7 +310,17 @@ spec:
         {{- if and (hasKey .Values.deployment "volumes") .Values.deployment.volumes }}
         {{- range $key, $value := .Values.deployment.volumes }}
         - name: {{ $key }}
-{{ include "application.tplvalues.render" ( dict "value" $value "context" $ ) | indent 8 }}
+        {{- with $value }}
+        {{- if hasKey . "configMap" }}
+          configMap:
+        {{ toYaml .configMap | indent 4 }}
+        {{- end }}
+        {{- if hasKey . "secret" }}
+          secret:
+        {{ toYaml .secret | indent 4 }}
+        {{- end }}
+        {{- end }}
+        {{- end }}
         {{- end }}
         {{- end }}
         {{- end }}
