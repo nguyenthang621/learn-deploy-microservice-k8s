@@ -1,12 +1,10 @@
-# Name of the application.
 applicationName: "discovery-server-shopnow"
-
 namespaceOverride: "shopnow"
 
-# These labels will be added on all resources, and you can add additional labels from below on individual resource
 labels:
   group: com.ndthang.group
   team: ndthang
+
 deployment:
   enabled: true
   dnsConfig:
@@ -14,35 +12,19 @@ deployment:
       - name: ndots
         value: "1"
   dnsPolicy: ClusterFirst
-  # By default deploymentStrategy is set to rollingUpdate with maxSurge of 25% and maxUnavailable of 25%
-  # You can change type to `Recreate` or can uncomment `rollingUpdate` specification and adjust them to your usage.
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 25%
       maxUnavailable: 25%
-
-  # Reload deployment if configMap/secret updates
   reloadOnChange: true
-
-  # Replicas to be created
   replicas: 1
-
-  containerSecurityContext:
-    capabilities:
-      add: ["NET_BIND_SERVICE"]
-
-  # Image of the app container
   image:
     repository: harbor.rnd.com/shopnow/discovery-server
     tag: v1
     pullPolicy: IfNotPresent
-
-  # Secrets used to pull image
   imagePullSecrets:
     - name: shopnow-registry-secret
-
-  # Resources to be defined for pod
   resources:
     limits:
       memory: 256Mi
@@ -50,34 +32,22 @@ deployment:
     requests:
       memory: 128Mi
       cpu: 0.1
-
-  # Command for primary container
-  command: []
-
-  # Args for primary contaner
-  args: []
-
-  # List of ports for the primary container
   ports:
-    - containerPort: 80
+    - containerPort: 8761
       name: http
       protocol: TCP
-
-  # Networking using the host network
-  hostNetwork: true
-
-  # Mount path for Volumes
+  env:
+    - name: SPRING_CONFIG_LOCATION
+      value: "file:/app/config/application.properties"
+  hostNetwork: false # Chỉ bật nếu thực sự cần
   volumeMounts:
     - name: config-volume
-      mountPath: "/app/src/main/resources"
-
-  # Volumes to be added to the pod
+      mountPath: "/app/config"
   volumes:
     - name: config-volume
       configMap:
         name: "discovery-server-shopnow-application-properties-configmap"
 
-# Additional ConfigMaps
 configMap:
   enabled: true
   files:
@@ -88,29 +58,22 @@ configMap:
         eureka.client.register-with-eureka=false
         eureka.client.fetch-registry=false
 
-# Service object for servicing pods
 service:
   enabled: true
   ports:
-    - port: 80
+    - port: 8761
       name: http
       protocol: TCP
-      targetPort: 80
+      targetPort: 8761
   type: ClusterIP
 
-# Ingress object for exposing services
 ingress:
   enabled: true
-
-  # Name of the ingress class
   ingressClassName: nginx
-
-  # List of host addresses to be exposed by this Ingress
-
   hosts:
     - host: "{{ .Release.Name }}.ndthang.live"
       paths:
         - path: /
           pathType: "Prefix"
           serviceName: "discovery-server-shopnow"
-          servicePort: 80
+          servicePort: 8761
