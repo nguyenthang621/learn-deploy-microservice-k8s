@@ -73,7 +73,7 @@ deployment:
   volumes:
     shopnow-discovery-server-volume:
       configMap:
-        name: '{{ template "application.name" . }}-discovery-server-shopnow-config'
+        name: "discovery-server-shopnow-discovery-server-shopnow-config"
 
 # Additional ConfigMaps
 configMap:
