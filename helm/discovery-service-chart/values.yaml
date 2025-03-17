@@ -73,7 +73,7 @@ deployment:
   volumes:
     config-volume:
       configMap:
-        name: "discovery-server-shopnow-application-properties-configmap"
+        name: '{{ template "application.name" . }}-application-properties-configmap'
 
   # # Mount path for Volumes
   # volumeMounts:
