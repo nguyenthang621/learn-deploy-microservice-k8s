@@ -5,7 +5,10 @@ kind: Deployment
 metadata:
   labels:
   {{- include "application.labels" $ | nindent 4 }}
-  {{- if .Values.deployment.reloadOnChange }}
+  {{- if and (hasKey .Values.deployment "additionalLabels") .Values.deployment.additionalLabels }}
+{{ toYaml .Values.deployment.additionalLabels | indent 4 }}
+  {{- end }}
+  {{- if or (and (hasKey .Values.deployment "annotations") .Values.deployment.annotations) (and (hasKey .Values.deployment "reloadOnChange") .Values.deployment.reloadOnChange) }}
   annotations:
   {{- end }}
   {{- if and (hasKey .Values.deployment "annotations") .Values.deployment.annotations }}
