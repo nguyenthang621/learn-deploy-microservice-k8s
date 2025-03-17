@@ -66,11 +66,6 @@ deployment:
   # Networking using the host network
   hostNetwork: true
 
-  envFrom:
-    code-config:
-      type: "configmap"
-      nameSuffix: "env-config"
-
 # Service object for servicing pods
 service:
   enabled: true
