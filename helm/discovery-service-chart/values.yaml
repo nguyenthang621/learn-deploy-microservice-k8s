@@ -67,11 +67,11 @@ deployment:
   hostNetwork: true
 
   volumeMounts:
-    shopnow-discovery-server-application-properties-config-volume:
+    shopnow-discovery-server-volume:
       mountPath: /app/src/main/resources/application.properties
       subPath: application.properties
   volumes:
-    configmap-volume:
+    shopnow-discovery-server-volume:
       configMap:
         name: "shopnow-discovery-server-application-properties-config-volume"
 
