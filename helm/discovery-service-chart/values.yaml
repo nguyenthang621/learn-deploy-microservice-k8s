@@ -27,6 +27,8 @@ deployment:
 
   # Replicas to be created
   replicas: 1
+  # env:
+  #   REACT_APP_BASE_API_URL: "http://api-shopnow.ndthang.live/api/"
 
   containerSecurityContext:
     capabilities:
@@ -66,27 +68,10 @@ deployment:
   # Networking using the host network
   hostNetwork: true
 
-  # # Mount path for Volumes
-  # volumeMounts:
-  #   - name: config-volume
-  #     mountPath: "/app/src/main/resources"
-
-  # # Volumes to be added to the pod
-  # volumes:
-  #   - name: config-volume
-  #     configMap:
-  #       name: "discovery-server-shopnow-application-properties-configmap"
-
-# # Additional ConfigMaps
-# configMap:
-#   enabled: true
-#   files:
-#     application-properties-configmap:
-#       application.properties: |
-#         spring.application.name=discovery-server
-#         server.port=8761
-#         eureka.client.register-with-eureka=false
-#         eureka.client.fetch-registry=false
+  envFrom:
+    code-config:
+      type: "configmap"
+      nameSuffix: "env-config"
 
 # Service object for servicing pods
 service:
@@ -114,3 +99,10 @@ ingress:
           pathType: "Prefix"
           serviceName: "discovery-server-shopnow"
           servicePort: 80
+
+# Additional ConfigMaps
+configMap:
+  enabled: false
+  files:
+    env-config:
+      REACT_APP_BASE_API_URL: "http://api-shopnow.ndthang.live/api/"
