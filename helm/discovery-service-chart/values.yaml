@@ -67,13 +67,12 @@ deployment:
   hostNetwork: true
 
   volumeMounts:
-  config-volume:
-    mountPath: "/app/src/main/resources/application.properties"
-
+    - name: config-volume
+      mountPath: "/app/src/main/resources/application.properties"
   volumes:
-    config-volume:
+    - name: config-volume
       configMap:
-        name: '{{ template "application.name" . }}-application-properties-configmap'
+        name: "discovery-server-shopnow-application-properties-configmap"
 
   # # Mount path for Volumes
   # volumeMounts:
