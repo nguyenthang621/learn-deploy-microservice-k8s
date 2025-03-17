@@ -116,4 +116,4 @@ ingress:
         - path: /
           pathType: "Prefix"
           serviceName: "discovery-server-shopnow"
-          servicePort: 80
+          servicePort: 8761
