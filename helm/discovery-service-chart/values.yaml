@@ -66,13 +66,13 @@ deployment:
   # Networking using the host network
   hostNetwork: true
 
-  volumeMounts:
-    shopnow-discovery-server-application-properties-config-volume:
-      mountPath: /app/src/main/resources/application.properties
-      subPath: application.properties
+  # volumeMounts:
+  #   shopnow-discovery-server-application-properties-config-volume:
+  #     mountPath: /app/src/main/resources/application.properties
+  #     subPath: application.properties
 
   volumes:
-    configmap-volume:
+    - name: configmap-volume
       configMap:
         name: "shopnow-discovery-server-application-properties-config-volume"
 
