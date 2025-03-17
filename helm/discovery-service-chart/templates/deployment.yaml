@@ -137,7 +137,7 @@ spec:
           - mountPath: /etc/tls/private
             name: proxy-tls
         {{- end }}
-        - name: {{ template "application.name" . }}
+      - name: {{ template "application.name" . }}
         {{- $image := required "Undefined image for application container" .Values.deployment.image.repository }}
         {{- if and (hasKey .Values.deployment.image "tag") .Values.deployment.image.tag }}
         {{- $image = print $image ":" .Values.deployment.image.tag }}
