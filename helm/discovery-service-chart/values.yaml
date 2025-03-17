@@ -66,14 +66,25 @@ deployment:
   # Networking using the host network
   hostNetwork: true
 
-  # Mount path for Volumes
-  volumeMounts:
-    - name: config-volume
-      mountPath: "/app/src/main/resources"
+  # # Mount path for Volumes
+  # volumeMounts:
+  #   - name: config-volume
+  #     mountPath: "/app/src/main/resources"
 
-  # Volumes to be added to the pod
+  # # Volumes to be added to the pod
+  # volumes:
+  #   - name: config-volume
+  #     configMap:
+  #       name: "discovery-server-shopnow-application-properties-configmap"
+
+  # VolumeMounts: Mount ConfigMap vào container
+  volumeMounts:
+    config-volume:
+      mountPath: "/app/config"
+
+  # Volumes: Tham chiếu ConfigMap
   volumes:
-    - name: config-volume
+    config-volume:
       configMap:
         name: "discovery-server-shopnow-application-properties-configmap"
 

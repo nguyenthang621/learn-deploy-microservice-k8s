@@ -17,8 +17,8 @@ metadata:
   {{- if and (hasKey .Values.deployment "reloadOnChange") .Values.deployment.reloadOnChange }}
     reloader.stakater.com/auto: "true"
   {{- end }}
-  - name: {{ template "application.name" . }}
-    namespace: {{ include "application.namespace" . }}
+  name: {{ template "application.name" . }}
+  namespace: {{ include "application.namespace" . }}
 spec:
   {{- if and (hasKey .Values.deployment "replicas") (not (eq .Values.deployment.replicas nil)) }}
   replicas: {{ .Values.deployment.replicas }}
