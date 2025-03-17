@@ -69,13 +69,13 @@ deployment:
   # Mount path for Volumes
   volumeMounts:
     - name: config-volume
-      mountPath: "/app/src/main/resources/application.properties"
+      mountPath: "/app/src/main/resources"
 
   # Volumes to be added to the pod
   volumes:
     - name: config-volume
       configMap:
-        name: "shopnow-discovery-server-application-properties-config-volume"
+        name: "discovery-server-shopnow-application-properties-configmap"
 
 # Additional ConfigMaps
 configMap:
