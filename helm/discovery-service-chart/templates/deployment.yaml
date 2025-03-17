@@ -4,18 +4,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-  {{- include "application.labels" $ | nindent 4 }}
-  {{- if and (hasKey .Values.deployment "additionalLabels") .Values.deployment.additionalLabels }}
-{{ toYaml .Values.deployment.additionalLabels | indent 4 }}
-  {{- end }}
-  {{- if or (and (hasKey .Values.deployment "annotations") .Values.deployment.annotations) (and (hasKey .Values.deployment "reloadOnChange") .Values.deployment.reloadOnChange) }}
+    {{- include "application.labels" $ | nindent 4 }}
+    {{- if and (hasKey .Values.deployment "additionalLabels") .Values.deployment.additionalLabels }}
+    {{- toYaml .Values.deployment.additionalLabels | nindent 4 }}
+    {{- end }}
+  {{- with .Values.deployment }}
+    {{- if or .annotations .reloadOnChange }}
   annotations:
-  {{- end }}
-  {{- if and (hasKey .Values.deployment "annotations") .Values.deployment.annotations }}
-{{ toYaml .Values.deployment.annotations | indent 4 }}
-  {{- end }}
-  {{- if and (hasKey .Values.deployment "reloadOnChange") .Values.deployment.reloadOnChange }}
+      {{- if .annotations }}
+    {{- toYaml .annotations | nindent 4 }}
+      {{- end }}
+      {{- if .reloadOnChange }}
     reloader.stakater.com/auto: "true"
+      {{- end }}
+    {{- end }}
   {{- end }}
   name: {{ template "application.name" . }}
   namespace: {{ include "application.namespace" . }}
