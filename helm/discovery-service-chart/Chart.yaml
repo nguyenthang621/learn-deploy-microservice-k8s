@@ -1,5 +1,5 @@
 apiVersion: v2
-name: discovery-shopnow
+name: discovery-server-shopnow
 description: A Helm chart for Kubernetes
 
 type: application
