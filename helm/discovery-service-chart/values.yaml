@@ -77,16 +77,16 @@ deployment:
   #     configMap:
   #       name: "discovery-server-shopnow-application-properties-configmap"
 
-# Additional ConfigMaps
-configMap:
-  enabled: true
-  files:
-    application-properties-configmap:
-      application.properties: |
-        spring.application.name=discovery-server
-        server.port=8761
-        eureka.client.register-with-eureka=false
-        eureka.client.fetch-registry=false
+# # Additional ConfigMaps
+# configMap:
+#   enabled: true
+#   files:
+#     application-properties-configmap:
+#       application.properties: |
+#         spring.application.name=discovery-server
+#         server.port=8761
+#         eureka.client.register-with-eureka=false
+#         eureka.client.fetch-registry=false
 
 # Service object for servicing pods
 service:
