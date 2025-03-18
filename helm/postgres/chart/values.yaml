@@ -16,28 +16,3 @@ persistence:
     server: "192.168.10.155" # Server NFS
   pvAnnotations: {} # Annotations cho PV (nếu cần)
   pvcAnnotations: {} # Annotations cho PVC (nếu cần)
-
-global:
-  postgresql:
-    auth:
-      postgresPassword: "abcd456789"
-      username: "postgres"
-      password: "admin"
-      database: "postgres"
-      existingSecret: ""
-      secretKeys:
-        adminPasswordKey: ""
-        userPasswordKey: ""
-        replicationPasswordKey: ""
-
-primary:
-  persistence:
-    enabled: true
-    existingClaim: "postgres-volume-claim"
-    mountPath: /bitnami/postgresql
-    accessModes:
-      - ReadWriteMany
-    size: 5Gi
-
-  volumePermissions:
-    enabled: true
