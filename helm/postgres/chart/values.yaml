@@ -1,18 +1,19 @@
-nameOverride: "postgres" # Đặt tên chart để pvName và pvcName mặc định không lệch
-namespace: "shopnow" # Namespace cho PVC (PV sẽ lỗi nếu giữ namespace)
+# values.yaml
+namespace: shopnow
 
 persistence:
-  enabled: true # Bật persistence để tạo PV và PVC
-  existingClaim: "" # Không dùng PVC có sẵn
-  pvName: "postgres-volume" # Tên PV cố định
-  pvcName: "postgres-volume-claim" # Tên PVC cố định
-  pvStorageSize: "10Gi" # Dung lượng PV
-  storageSize: "5Gi" # Dung lượng yêu cầu cho PVC
-  accessMode: "ReadWriteMany" # Chế độ truy cập
-  storageClass: "nfs-storage" # StorageClass
-  reclaimPolicy: "Retain" # Chính sách reclaim
+  enabled: true
+  pvName: "postgres-volume"
+  pvcName: "postgres-volume-claim"
+  type: "local"
+  app: "postgres"
+  pvStorageSize: "10Gi"
+  storageSize: "5Gi"
+  accessMode: "ReadWriteMany"
+  storageClass: "nfs-storage"
+  reclaimPolicy: "Retain"
   nfs:
-    path: "/data/nfs-shared2/postgresql" # Đường dẫn NFS
-    server: "192.168.10.155" # Server NFS
-  pvAnnotations: {} # Annotations cho PV (nếu cần)
-  pvcAnnotations: {} # Annotations cho PVC (nếu cần)
+    path: "/data/nfs-shared2/postgresql"
+    server: "192.168.10.155"
+  pvAnnotations: {}
+  pvcAnnotations: {}
