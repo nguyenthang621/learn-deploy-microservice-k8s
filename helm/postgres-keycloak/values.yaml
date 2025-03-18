@@ -1,0 +1,46 @@
+namespace: shopnow
+
+# Cấu hình dependency pvc
+pvc:
+  enabled: true
+  pvName: "postgres-keycloak-volume"
+  pvcName: "postgres-keycloak-volume-claim"
+  type: "local"
+  app: "postgres"
+  pvStorageSize: "10Gi"
+  storageSize: "5Gi"
+  accessMode: "ReadWriteMany"
+  storageClass: "nfs-storage"
+  reclaimPolicy: "Retain"
+  nfs:
+    path: "/data/nfs-shared2/postgresql-keycloak"
+    server: "192.168.10.155"
+
+# Cấu hình cho PostgreSQL (Bitnami style)
+architecture: standalone
+replicaCount: 1
+
+global:
+  postgresql:
+    auth:
+      postgresPassword: "abcd456789"
+      username: "bn_keycloak"
+      password: "abcd456789"
+      database: "bitnami_keycloak"
+      existingSecret: ""
+      secretKeys:
+        adminPasswordKey: ""
+        userPasswordKey: ""
+        replicationPasswordKey: ""
+
+primary:
+  persistence:
+    enabled: true
+    existingClaim: "postgres-volume-claim"
+    mountPath: /bitnami/postgresql
+    accessModes:
+      - ReadWriteMany
+    size: 5Gi
+
+  volumePermissions:
+    enabled: true

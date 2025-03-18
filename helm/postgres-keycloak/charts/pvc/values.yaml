@@ -3,8 +3,8 @@ namespace: shopnow
 
 persistence:
   enabled: true
-  pvName: "postgresql-keycloak-volume"
-  pvcName: "postgresql-keycloak-volume-claim"
+  pvName: "postgres-keycloak-volume"
+  pvcName: "postgres-keycloak-volume-claim"
   type: "local"
   app: "postgres"
   pvStorageSize: "10Gi"
