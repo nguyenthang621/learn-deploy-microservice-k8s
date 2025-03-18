@@ -1,0 +1,4 @@
+helm pull oci://registry-1.docker.io/bitnamicharts/postgresql --version 16.5.2
+
+
+https://artifacthub.io/packages/helm/bitnami/postgresql?modal=install

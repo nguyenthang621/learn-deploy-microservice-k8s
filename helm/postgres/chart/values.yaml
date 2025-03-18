@@ -1,0 +1,43 @@
+nameOverride: "postgres" # Đặt tên chart để pvName và pvcName mặc định không lệch
+namespace: "shopnow" # Namespace cho PVC (PV sẽ lỗi nếu giữ namespace)
+
+persistence:
+  enabled: true # Bật persistence để tạo PV và PVC
+  existingClaim: "" # Không dùng PVC có sẵn
+  pvName: "postgres-volume" # Tên PV cố định
+  pvcName: "postgres-volume-claim" # Tên PVC cố định
+  pvStorageSize: "10Gi" # Dung lượng PV
+  storageSize: "5Gi" # Dung lượng yêu cầu cho PVC
+  accessMode: "ReadWriteMany" # Chế độ truy cập
+  storageClass: "nfs-storage" # StorageClass
+  reclaimPolicy: "Retain" # Chính sách reclaim
+  nfs:
+    path: "/data/nfs-shared2/postgresql" # Đường dẫn NFS
+    server: "192.168.10.155" # Server NFS
+  pvAnnotations: {} # Annotations cho PV (nếu cần)
+  pvcAnnotations: {} # Annotations cho PVC (nếu cần)
+
+global:
+  postgresql:
+    auth:
+      postgresPassword: "abcd456789"
+      username: "postgres"
+      password: "admin"
+      database: "postgres"
+      existingSecret: ""
+      secretKeys:
+        adminPasswordKey: ""
+        userPasswordKey: ""
+        replicationPasswordKey: ""
+
+primary:
+  persistence:
+    enabled: true
+    existingClaim: "postgres-volume-claim"
+    mountPath: /bitnami/postgresql
+    accessModes:
+      - ReadWriteMany
+    size: 5Gi
+
+  volumePermissions:
+    enabled: true
