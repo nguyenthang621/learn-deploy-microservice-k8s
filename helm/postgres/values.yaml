@@ -1,3 +1,25 @@
+namespace: shopnow
+
+# Cấu hình dependency pvc
+pvc:
+  enabled: true
+  pvName: "postgres-volume"
+  pvcName: "postgres-volume-claim"
+  type: "local"
+  app: "postgres"
+  pvStorageSize: "10Gi"
+  storageSize: "5Gi"
+  accessMode: "ReadWriteMany"
+  storageClass: "nfs-storage"
+  reclaimPolicy: "Retain"
+  nfs:
+    path: "/data/nfs-shared2/postgresql"
+    server: "192.168.10.155"
+
+# Cấu hình cho PostgreSQL (Bitnami style)
+architecture: standalone
+replicaCount: 1
+
 global:
   postgresql:
     auth:
