@@ -1,0 +1,34 @@
+namespace: shopnow
+
+# Cấu hình dependency pvc
+pvc:
+  enabled: true
+  pvName: "postgresql-keycloak-volume"
+  pvcName: "postgresql-keycloak-volume-claim"
+  type: "local"
+  app: "postgres"
+  pvStorageSize: "10Gi"
+  storageSize: "5Gi"
+  accessMode: "ReadWriteMany"
+  storageClass: "nfs-storage"
+  reclaimPolicy: "Retain"
+  nfs:
+    path: "/data/nfs-shared2/postgresql-keycloak"
+    server: "192.168.10.155"
+
+postgresql:
+  enabled: false
+
+externalDatabase:
+  host: "postgres-keycloak-postgresql.shopnow.svc.cluster.local"
+  port: 5432
+  user: bn_keycloak
+  database: bitnami_keycloak
+  password: "abcd456789"
+
+ingress:
+  enabled: true
+  ingressClassName: "nginx"
+  hostname: keycloak-shopnow.ndthang.com
+  path: /
+  tls: false
