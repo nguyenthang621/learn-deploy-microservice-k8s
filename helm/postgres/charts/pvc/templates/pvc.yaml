@@ -1,0 +1,53 @@
+# charts/pvc/templates/pvc.yaml
+{{ if .Values.enabled }}
+
+# Define PersistentVolume (PV)
+{{- if or .Values.pvName .Values.nfs }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.pvName | default "postgres-volume" }}
+  labels:
+    type: {{ .Values.type | default "local" }}
+    app: {{ .Values.app | default "postgres" }}
+  {{- if .Values.pvAnnotations }}
+  annotations:
+    {{ toYaml .Values.pvAnnotations | nindent 4 }}
+  {{- end }}
+spec:
+  capacity:
+    storage: {{ .Values.pvStorageSize | default "10Gi" | quote }}
+  accessModes:
+    - {{ .Values.accessMode | default "ReadWriteMany" | quote }}
+  persistentVolumeReclaimPolicy: {{ .Values.reclaimPolicy | default "Retain" | quote }}
+  storageClassName: {{ .Values.storageClass | default "nfs-storage" | quote }}
+  {{- if .Values.nfs }}
+  nfs:
+    path: {{ .Values.nfs.path | default "/data/nfs-shared2/postgresql" | quote }}
+    server: {{ .Values.nfs.server | default "192.168.10.155" | quote }}
+  {{- end }}
+{{- end }}
+
+# Define PersistentVolumeClaim (PVC)
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.pvcName | default "postgres-volume-claim" }}
+  namespace: {{ .Values.namespace | default "shopnow" }}
+  labels:
+    app: {{ .Values.app | default "postgres" }}
+  {{- if .Values.pvcAnnotations }}
+  annotations:
+    {{ toYaml .Values.pvcAnnotations | nindent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+    - {{ .Values.accessMode | default "ReadWriteMany" | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.storageSize | default "5Gi" | quote }}
+  storageClassName: {{ .Values.storageClass | default "nfs-storage" | quote }}
+
+{{- end }}
