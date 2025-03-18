@@ -1,0 +1,19 @@
+apiVersion: v2
+name: postgres-shopnow
+description: A Helm chart for Kubernetes
+
+type: application
+
+# Helm chart Version
+
+version: 0.1.0
+
+keywords:
+  - kubernetes
+  - application
+  - postgres
+  - database
+
+maintainers:
+  - name: ndthang
+    email: nthang621@gmail.com
