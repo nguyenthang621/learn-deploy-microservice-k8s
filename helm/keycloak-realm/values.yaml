@@ -53,10 +53,6 @@ externalDatabase:
 keycloakConfigCli:
   enabled: true
   ttlSecondsAfterFinished: 300 # Xóa Job sau 5 phút khi hoàn thành
-  command:
-    - "/opt/bitnami/keycloak/bin/kc.sh"
-    - "start-dev"
-    - "--import-realm"
   extraEnvVars:
     - name: DB_VENDOR
       value: "postgres"
