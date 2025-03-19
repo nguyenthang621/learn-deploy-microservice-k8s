@@ -16,11 +16,6 @@ pvc:
     path: "/data/nfs-shared2/keycloak-realms"
     server: "192.168.10.155"
 
-command:
-  - "/opt/keycloak/bin/kc.sh"
-  - "start-dev"
-  - "--import-realm"
-
 extraEnvVars:
   - name: DB_VENDOR
     value: "postgres"
@@ -57,11 +52,6 @@ externalDatabase:
 
 keycloakConfigCli:
   enabled: true
-  command:
-    - "/opt/keycloak/bin/kc.sh"
-    - "import"
-    - "--dir"
-    - "/opt/keycloak/data/import"
   extraEnvVars:
     - name: DB_VENDOR
       value: "postgres"
@@ -79,13 +69,7 @@ keycloakConfigCli:
       value: "admin"
     - name: KEYCLOAK_ADMIN_PASSWORD
       value: "admin"
-  extraVolumes:
-    - name: keycloak-realms
-      persistentVolumeClaim:
-        claimName: "keycloak-realms-volume-claim"
-  extraVolumeMounts:
-    - name: keycloak-realms
-      mountPath: "/opt/keycloak/data/import"
+
   backoffLimit: 10
 
 service:
