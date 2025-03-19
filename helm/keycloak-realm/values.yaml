@@ -52,6 +52,18 @@ externalDatabase:
 
 keycloakConfigCli:
   enabled: true
+  ttlSecondsAfterFinished: 300 # Xóa Job sau 5 phút khi hoàn thành
+  command:
+    - "/bin/bash"
+    - "-c"
+    - |
+      # Chờ Keycloak sẵn sàng
+      until curl -s -f http://localhost:8080/health/ready; do echo "Waiting for Keycloak..."; sleep 5; done
+      # Tạo tài khoản admin
+      /opt/bitnami/keycloak/bin/kcadm.sh config credentials --server http://localhost:8080 --realm master --user admin --password admin || true
+      /opt/bitnami/keycloak/bin/kcadm.sh create users -r master -s username=admin -s enabled=true -s "credentials=[{\"type\":\"password\",\"value\":\"admin\"}]"
+      /opt/bitnami/keycloak/bin/kcadm.sh add-roles -r master --uusername admin --rolename admin
+      echo "Admin user created"
   extraEnvVars:
     - name: DB_VENDOR
       value: "postgres"
@@ -82,13 +94,13 @@ keycloakConfigCli:
 
   backoffLimit: 10
 
-auth:
-  ## @param auth.adminUser Keycloak administrator user
-  ##
-  adminUser: admin
-  ## @param auth.adminPassword Keycloak administrator password for the new user
-  ##
-  adminPassword: "admin"
+# auth:
+#   ## @param auth.adminUser Keycloak administrator user
+#   ##
+#   adminUser: admin
+#   ## @param auth.adminPassword Keycloak administrator password for the new user
+#   ##
+#   adminPassword: "admin"
 
 service:
   type: ClusterIP
