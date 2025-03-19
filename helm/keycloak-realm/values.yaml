@@ -1,11 +1,6 @@
 postgresql:
   enabled: false
 
-image:
-  repository: "quay.io/keycloak/keycloak"
-  tag: "23.0.3"
-  pullPolicy: "IfNotPresent"
-
 command:
   - "/opt/keycloak/bin/kc.sh"
   - "start-dev"
