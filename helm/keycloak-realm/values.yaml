@@ -1,36 +1,57 @@
 postgresql:
   enabled: false
 
-# Cấu hình dependency pvc
-pvc:
-  enabled: true
-  pvName: "keycloak-realms-volume"
-  pvcName: "keycloak-realms-volume-claim"
-  type: "local"
-  app: "keycloak-realms"
-  pvStorageSize: "10Gi"
-  storageSize: "5Gi"
-  accessMode: "ReadWriteMany"
-  storageClass: "nfs-storage"
-  reclaimPolicy: "Retain"
-  nfs:
-    path: "/data/nfs-shared2/keycloak-realms"
-    server: "192.168.10.155"
+image:
+  repository: "quay.io/keycloak/keycloak"
+  tag: "23.0.3"
+  pullPolicy: "IfNotPresent"
+
+command:
+  - "/opt/keycloak/bin/kc.sh"
+  - "start-dev"
+  - "--import-realm"
+
+extraEnvVars:
+  - name: DB_VENDOR
+    value: "postgres"
+  - name: DB_ADDR
+    value: "postgres-keycloak-postgresql-hl.shopnow.svc.cluster.local"
+  - name: DB_PORT
+    value: "5432"
+  - name: DB_DATABASE
+    value: "bitnami_keycloak"
+  - name: DB_USER
+    value: "bn_keycloak"
+  - name: DB_PASSWORD
+    value: "abcd456789"
+  - name: KEYCLOAK_ADMIN
+    value: "admin"
+  - name: KEYCLOAK_ADMIN_PASSWORD
+    value: "admin"
+
+extraVolumes:
+  - name: keycloak-realms
+    persistentVolumeClaim:
+      claimName: "keycloak-realms-volume-claim"
+
+extraVolumeMounts:
+  - name: keycloak-realms
+    mountPath: "/opt/keycloak/data/import"
 
 externalDatabase:
   host: "postgres-keycloak-postgresql-hl.shopnow.svc.cluster.local"
   port: 5432
-  user: bn_keycloak
-  database: bitnami_keycloak
+  user: "bn_keycloak"
+  database: "bitnami_keycloak"
   password: "abcd456789"
 
 keycloakConfigCli:
   enabled: true
-  # command:
-  #   - "/opt/keycloak/bin/kc.sh"
-  #   - "start-dev"
-  #   - "--import-realm"
-  # Environment variables
+  command:
+    - "/opt/keycloak/bin/kc.sh"
+    - "import"
+    - "--dir"
+    - "/opt/keycloak/data/import"
   extraEnvVars:
     - name: DB_VENDOR
       value: "postgres"
@@ -48,27 +69,29 @@ keycloakConfigCli:
       value: "admin"
     - name: KEYCLOAK_ADMIN_PASSWORD
       value: "admin"
+  extraVolumes:
+    - name: keycloak-realms
+      persistentVolumeClaim:
+        claimName: "keycloak-realms-volume-claim"
+  extraVolumeMounts:
+    - name: keycloak-realms
+      mountPath: "/opt/keycloak/data/import"
+  backoffLimit: 10
 
-# Volume cho Keycloak chính
-extraVolumes:
-  - name: keycloak-realms
-    persistentVolumeClaim:
-      claimName: "keycloak-realms-volume-claim"
-
-extraVolumeMounts:
-  - name: keycloak-realms
-    mountPath: "/opt/keycloak/data/import"
+service:
+  type: ClusterIP
+  ports:
+    http: 8080
 
 ingress:
   enabled: true
   ingressClassName: "nginx"
-  hostname: keycloak-shopnow.ndthang.live
-  path: /
+  hostname: "keycloak-shopnow.ndthang.live"
+  path: "/"
+  pathType: "Prefix"
   tls: false
 
-service:
-  type: ClusterIP
-  http:
-    enabled: true
-  ports:
-    http: 8080
+podLabels:
+  app: "keycloak-realms"
+
+replicaCount: 1
