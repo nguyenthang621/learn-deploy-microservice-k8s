@@ -2,7 +2,7 @@ postgresql:
   enabled: false
 
 externalDatabase:
-  host: "postgres-keycloak-postgresql.shopnow.svc.cluster.local"
+  host: "postgres-keycloak-postgresql-hl.shopnow.svc.cluster.local"
   port: 5432
   user: bn_keycloak
   database: bitnami_keycloak
@@ -14,3 +14,10 @@ ingress:
   hostname: keycloak-shopnow.ndthang.live
   path: /
   tls: false
+
+service:
+  type: ClusterIP
+  http:
+    enabled: true
+  ports:
+    http: 8080
