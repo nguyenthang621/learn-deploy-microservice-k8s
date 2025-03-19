@@ -69,6 +69,8 @@ keycloakConfigCli:
       value: "admin"
     - name: KEYCLOAK_ADMIN_PASSWORD
       value: "admin"
+    - name: IMPORT_FILES_LOCATIONS
+      value: "/opt/keycloak/data/import/*"
 
   backoffLimit: 10
 
