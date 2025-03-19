@@ -23,6 +23,7 @@ replicaCount: 1
 global:
   postgresql:
     auth:
+      enablePostgresUser: true
       postgresPassword: "abcd456789"
       username: "bn_keycloak"
       password: "abcd456789"

@@ -23,6 +23,7 @@ replicaCount: 1
 global:
   postgresql:
     auth:
+      enablePostgresUser: true
       postgresPassword: "abcd456789"
       username: "postgres"
       password: "admin"
