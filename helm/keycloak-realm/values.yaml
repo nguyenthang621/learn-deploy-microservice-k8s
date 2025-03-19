@@ -71,6 +71,11 @@ keycloakConfigCli:
       value: "admin"
     - name: IMPORT_FILES_LOCATIONS
       value: "/opt/keycloak/data/import/*"
+  extraVolumes:
+    - name: keycloak-realms
+      persistentVolumeClaim:
+        claimName: "keycloak-realms-volume-claim"
+
   extraVolumeMounts:
     - name: keycloak-realms
       mountPath: "/opt/keycloak/data/import"
