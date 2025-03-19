@@ -26,10 +26,10 @@ externalDatabase:
 
 keycloakConfigCli:
   enabled: true
-  command:
-    - "/opt/keycloak/bin/kc.sh"
-    - "start-dev"
-    - "--import-realm"
+  # command:
+  #   - "/opt/keycloak/bin/kc.sh"
+  #   - "start-dev"
+  #   - "--import-realm"
   # Environment variables
   extraEnvVars:
     - name: DB_VENDOR
