@@ -32,6 +32,18 @@ keycloakConfigCli:
   #   - "--import-realm"
   # Environment variables
   extraEnvVars:
+    - name: DB_VENDOR
+      value: "postgres"
+    - name: DB_ADDR
+      value: "postgres-keycloak-postgresql-hl.shopnow.svc.cluster.local"
+    - name: DB_PORT
+      value: "5432"
+    - name: DB_DATABASE
+      value: "bitnami_keycloak"
+    - name: DB_USER
+      value: "bn_keycloak"
+    - name: DB_PASSWORD
+      value: "abcd456789"
     - name: KEYCLOAK_ADMIN
       value: "admin"
     - name: KEYCLOAK_ADMIN_PASSWORD
