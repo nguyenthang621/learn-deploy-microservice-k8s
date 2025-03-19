@@ -46,9 +46,16 @@ keycloakConfigCli:
       value: "admin"
     - name: KEYCLOAK_ADMIN_PASSWORD
       value: "admin"
-  extraVolumeMounts:
-    - name: keycloak-realms
-      mountPath: "/opt/keycloak/data/import"
+
+# Volume cho Keycloak chính
+extraVolumes:
+  - name: keycloak-realms
+    persistentVolumeClaim:
+      claimName: "keycloak-realms-volume-claim"
+
+extraVolumeMounts:
+  - name: keycloak-realms
+    mountPath: "/opt/keycloak/data/import"
 
 ingress:
   enabled: true
