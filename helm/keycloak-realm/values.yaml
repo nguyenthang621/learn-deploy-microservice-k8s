@@ -71,6 +71,9 @@ keycloakConfigCli:
       value: "admin"
     - name: IMPORT_FILES_LOCATIONS
       value: "/opt/keycloak/data/import/*"
+  extraVolumeMounts:
+    - name: keycloak-realms
+      mountPath: "/opt/keycloak/data/import"
 
   backoffLimit: 10
 
