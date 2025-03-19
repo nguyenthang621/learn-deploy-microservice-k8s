@@ -43,11 +43,6 @@ primary:
     size: 5Gi
   podManagementPolicy: "OrderedReady"
   terminationGracePeriodSeconds: 60
-  lifecycleHooks:
-    preStop:
-      exec:
-        command:
-          ["/bin/sh", "-c", "pg_ctl stop -D /bitnami/postgresql/data -m fast"]
   resources:
     requests:
       memory: "512Mi"

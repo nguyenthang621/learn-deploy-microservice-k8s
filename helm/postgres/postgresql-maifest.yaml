@@ -44,6 +44,7 @@ spec:
   storageClassName: nfs-storage
   accessModes:
     - ReadWriteMany
+  volumeName: postgres-volume
   resources:
     requests:
       storage: 5Gi
@@ -74,7 +75,7 @@ spec:
             - configMapRef:
                 name: postgres-secret
           volumeMounts:
-            - mountPath: /var/lib/pgsql/data
+            - mountPath: /var/lib/postgresql/data
               name: postgresdata
       volumes:
         - name: postgresdata
