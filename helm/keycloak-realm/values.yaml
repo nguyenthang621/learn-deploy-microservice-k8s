@@ -1,6 +1,21 @@
 postgresql:
   enabled: false
 
+pvc:
+  enabled: true
+  pvName: "keycloak-realms-volume"
+  pvcName: "keycloak-realms-volume-claim"
+  type: "local"
+  app: "keycloak-realms"
+  pvStorageSize: "10Gi"
+  storageSize: "5Gi"
+  accessMode: "ReadWriteMany"
+  storageClass: "nfs-storage"
+  reclaimPolicy: "Retain"
+  nfs:
+    path: "/data/nfs-shared2/keycloak-realms"
+    server: "192.168.10.155"
+
 command:
   - "/opt/keycloak/bin/kc.sh"
   - "start-dev"
