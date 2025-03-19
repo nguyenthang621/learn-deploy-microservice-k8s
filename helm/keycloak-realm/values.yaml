@@ -1,12 +1,54 @@
 postgresql:
   enabled: false
 
+# Cấu hình dependency pvc
+pvc:
+  enabled: true
+  pvName: "keycloak-realms-volume"
+  pvcName: "keycloak-realms-volume-claim"
+  type: "local"
+  app: "keycloak-realms"
+  pvStorageSize: "10Gi"
+  storageSize: "5Gi"
+  accessMode: "ReadWriteMany"
+  storageClass: "nfs-storage"
+  reclaimPolicy: "Retain"
+  nfs:
+    path: "/data/nfs-shared2/keycloak-realms"
+    server: "192.168.10.155"
+
 externalDatabase:
   host: "postgres-keycloak-postgresql-hl.shopnow.svc.cluster.local"
   port: 5432
   user: bn_keycloak
   database: bitnami_keycloak
   password: "abcd456789"
+
+keycloakConfigCli:
+  enabled: true
+  command:
+    - "/opt/keycloak/bin/kc.sh"
+    - "start-dev"
+    - "--import-realm"
+  # Environment variables
+  extraEnvVars:
+    - name: DB_VENDOR
+      value: "MYSQL"
+    - name: DB_ADDR
+      value: "keycloak-mysql"
+    - name: DB_DATABASE
+      value: "keycloak"
+    - name: DB_USER
+      value: "keycloak"
+    - name: DB_PASSWORD
+      value: "password"
+    - name: KEYCLOAK_ADMIN
+      value: "admin"
+    - name: KEYCLOAK_ADMIN_PASSWORD
+      value: "admin"
+  extraVolumeMounts:
+    - name: keycloak-realms
+      mountPath: "/opt/keycloak/data/import"
 
 ingress:
   enabled: true

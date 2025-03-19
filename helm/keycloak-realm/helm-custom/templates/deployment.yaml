@@ -1,0 +1,53 @@
+{{- if .Values.deployment.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- range $key, $value := .Values.deployment.labels }}
+    {{ $key }}: {{ $value }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      {{- range $key, $value := .Values.deployment.labels }}
+      {{ $key }}: {{ $value }}
+      {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- range $key, $value := .Values.deployment.labels }}
+        {{ $key }}: {{ $value }}
+        {{- end }}
+    spec:
+      containers:
+        - name: keycloak
+          image: {{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}
+          command:
+            {{- range .Values.deployment.command }}
+            - {{ . }}
+            {{- end }}
+          env:
+            {{- range .Values.deployment.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          ports:
+            {{- range .Values.deployment.ports }}
+            - containerPort: {{ .containerPort }}
+              name: {{ .name }}
+            {{- end }}
+          volumeMounts:
+            {{- range .Values.deployment.volumeMounts }}
+            - mountPath: {{ .mountPath }}
+              name: {{ .name }}
+            {{- end }}
+      volumes:
+        {{- range .Values.deployment.volumes }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ .persistentVolumeClaim.claimName }}
+        {{- end }}
+{{- end -}}
