@@ -91,7 +91,7 @@ configMap:
         eureka.client.service-url.defaultZone=http://discovery-server-shopnow:8761/eureka/
 
         # Datasource configuration
-        spring.datasource.url=jdbc:postgresql://postgres:5432/postgres?useSSL=false
+        spring.datasource.url=jdbc:postgresql://postgres-shopnow-postgresql:5432/postgres?useSSL=false
         spring.datasource.username=postgres
         spring.datasource.password=admin
         spring.jpa.hibernate.ddl-auto=update
