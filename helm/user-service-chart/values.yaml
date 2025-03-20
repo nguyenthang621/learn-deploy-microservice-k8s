@@ -42,14 +42,14 @@ deployment:
   imagePullSecrets:
     - name: shopnow-registry-secret
 
-  # Resources to be defined for pod
-  resources:
-    limits:
-      memory: 256Mi
-      cpu: 0.5
-    requests:
-      memory: 128Mi
-      cpu: 0.1
+  # # Resources to be defined for pod
+  # resources:
+  #   limits:
+  #     memory: 256Mi
+  #     cpu: 0.5
+  #   requests:
+  #     memory: 128Mi
+  #     cpu: 0.1
 
   # Command for primary container
   command: []
