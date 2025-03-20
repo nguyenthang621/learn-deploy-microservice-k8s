@@ -1,5 +1,5 @@
 apiVersion: v2
-name: product-service-shopnow
+name: cart-service-shopnow
 description: A Helm chart for Kubernetes
 
 type: application
@@ -11,7 +11,7 @@ version: 0.1.0
 keywords:
   - kubernetes
   - application
-  - product-service
+  - cart-service
   - springboot
 
 maintainers:
