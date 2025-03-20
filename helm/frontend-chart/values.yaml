@@ -105,4 +105,4 @@ configMap:
   enabled: true
   files:
     env-config:
-      REACT_APP_BASE_API_URL: "http://api-shopnow.ndthang.live/api/"
+      REACT_APP_BASE_API_URL: "http://api-gateway.ndthang.live/api/"
