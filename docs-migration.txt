@@ -17,3 +17,13 @@ Các bước thực hiện:
 4. Addhost
 5. Test dev
 6. Public domain
+
+
+
+
+---
+
+helm 
+
+1. postgres-keycloak
+h install postgres-keycloak ./postgres/postgresql/ -f ./postgres-keycloak/values.yaml -n shopnow
