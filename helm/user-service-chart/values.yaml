@@ -206,7 +206,7 @@ deployment:
       protocol: TCP
 
   # Networking using the host network
-  hostNetwork: true
+  hostNetwork: false
 
   # Graceful termination timeout
   terminationGracePeriodSeconds: 120

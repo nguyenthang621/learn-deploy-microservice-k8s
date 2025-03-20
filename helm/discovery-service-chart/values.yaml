@@ -64,7 +64,7 @@ deployment:
       protocol: TCP
 
   # Networking using the host network
-  hostNetwork: true
+  hostNetwork: false
 
   volumeMounts:
     shopnow-discovery-server-volume:

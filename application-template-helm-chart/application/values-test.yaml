@@ -10,8 +10,8 @@ labels:
 deployment:
   dnsConfig:
     options:
-    - name: ndots
-      value: '1'
+      - name: ndots
+        value: "1"
   dnsPolicy: ClusterFirst
   # By default deploymentStrategy is set to rollingUpdate with maxSurge of 25% and maxUnavailable of 25%
   # You can change type to `Recreate` or can uncomment `rollingUpdate` specification and adjust them to your usage.
@@ -30,21 +30,21 @@ deployment:
 
   # Init containers which runs before the app container
   hostAliases:
-  - ip: "127.0.0.1"
-    hostnames:
-    - "foo.local"
-    - "bar.local"
-  - ip: "10.1.2.3"
-    hostnames:
-    - "foo.remote"
-    - "bar.remote"
+    - ip: "127.0.0.1"
+      hostnames:
+        - "foo.local"
+        - "bar.local"
+    - ip: "10.1.2.3"
+      hostnames:
+        - "foo.remote"
+        - "bar.remote"
 
   # Init containers which runs before the app container
   initContainers:
-     init-contaner:
-        image: busybox
-        imagePullPolicy: IfNotPresent
-        command: ['/bin/sh']
+    init-contaner:
+      image: busybox
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/sh"]
 
   # Additional labels for Deployment
   additionalLabels:
@@ -88,7 +88,7 @@ deployment:
   # Environment variables to be passed to the app container
   env:
     ENVIRONMENT:
-       value: "dev"
+      value: "dev"
 
   # Volumes to be added to the pod
   volumes:
@@ -109,8 +109,8 @@ deployment:
 
   # Mount path for Volumes
   volumeMounts:
-      volume-name:
-         mountPath: /path1
+    volume-name:
+      mountPath: /path1
 
   # The priority class for pod scheduling
   priorityClassName: ""
@@ -124,14 +124,14 @@ deployment:
 
   # Pod affinity and pod anti-affinity allow you to specify rules about how pods should be placed relative to other pods.
   affinity:
-   nodeAffinity:
-     requiredDuringSchedulingIgnoredDuringExecution:
-       nodeSelectorTerms:
-       - matchExpressions:
-         - key: disktype
-           operator: In
-           values:
-           - ssd
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: disktype
+                operator: In
+                values:
+                  - ssd
 
   # Image of the app container
   image:
@@ -145,9 +145,9 @@ deployment:
     failureThreshold: 30
     periodSeconds: 10
     httpGet:
-      path: '/path'
+      path: "/path"
       port: 8080
-    exec: { }
+    exec: {}
 
   readinessProbe:
     enabled: true
@@ -193,10 +193,10 @@ deployment:
 
   # Add additional containers besides init and app containers
   additionalContainers:
-  - name: sidecar-contaner
-    image: busybox
-    imagePullPolicy: IfNotPresent
-    command: ['/bin/sh']
+    - name: sidecar-contaner
+      image: busybox
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/sh"]
 
   # Security Context for the pod
   securityContext:
@@ -210,18 +210,18 @@ deployment:
 
   # List of ports for the primary container
   ports:
-  - containerPort: 8080
-    name: http
-    protocol: TCP
-  - containerPort: 8778
-    name: jolokia
-    protocol: TCP
-  - containerPort: 8443
-    name: https
-    protocol: TCP
+    - containerPort: 8080
+      name: http
+      protocol: TCP
+    - containerPort: 8778
+      name: jolokia
+      protocol: TCP
+    - containerPort: 8443
+      name: https
+      protocol: TCP
 
   # Networking using the host network
-  hostNetwork: true
+  hostNetwork: false
 
   # Graceful termination timeout
   terminationGracePeriodSeconds: 120
@@ -271,7 +271,7 @@ service:
       kubernetes.io/ingress.class: external-ingress
       ingress.kubernetes.io/rewrite-target: /
       ingress.kubernetes.io/force-ssl-redirect: "true"
-  
+
   ports:
     - port: 8080
       name: http
@@ -291,17 +291,17 @@ ingress:
   hosts:
     - host: chart-example.local
       paths:
-      - path: /
+        - path: /
+        #  pathType: ''
+        #  serviceName: ''
+        #  servicePort: ''
+        - path: /subpath
       #  pathType: ''
       #  serviceName: ''
       #  servicePort: ''
-      - path: /subpath
-      #  pathType: ''
-      #  serviceName: ''
-      #  servicePort: ''
-    - host: '{{ .Release.Name }}.stakater.com'
+    - host: "{{ .Release.Name }}.stakater.com"
       paths:
-      - path: /
+        - path: /
 
   # Additional labels for this Ingress
   additionalLabels:
@@ -319,7 +319,7 @@ ingress:
     - secretName: chart-example-tls
       hosts:
         - chart-example.local
-        - '{{ .Release.Name }}.stakater.com'
+        - "{{ .Release.Name }}.stakater.com"
 
 # Route object for exposing services (OpenShift only)
 route:
@@ -364,15 +364,15 @@ secretProviderClass:
   name: mongo-host
   provider: vault
   vaultAddress: "http://vault:8200"
-  roleName: '{{ .Release.Name }}'
+  roleName: "{{ .Release.Name }}"
   objects: |
     - objectName: "MONGO_HOST"
       secretPath: "testing/data/mongoDb"
       secretKey: "MONGO_HOST"
   secretObjects:
     - data:
-      - key: MONGO_HOST
-        objectName: host
+        - key: MONGO_HOST
+          objectName: host
       secretName: secret-mongo-host
       type: Opaque
 
@@ -386,7 +386,7 @@ forecastle:
 
   # URL of the icon for the custom app
   icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/stakater-big.png
-  
+
   # Name of the application to be displayed on the Forecastle Dashboard
   displayName: "application"
 
@@ -418,22 +418,22 @@ rbac:
 
   # Create Roles (Namespaced)
   roles:
-  - name: configmaps
-    rules:
-    - apiGroups:
-      - ""
-      resources:
-      - configmaps
-      verbs:
-      - get
-  - name: secrets
-    rules:
-    - apiGroups:
-      - ""
-      resources:
-      - secrets
-      verbs:
-      - get
+    - name: configmaps
+      rules:
+        - apiGroups:
+            - ""
+          resources:
+            - configmaps
+          verbs:
+            - get
+    - name: secrets
+      rules:
+        - apiGroups:
+            - ""
+          resources:
+            - secrets
+          verbs:
+            - get
 
 # Additional ConfigMaps
 configMap:
@@ -443,10 +443,10 @@ configMap:
   annotations:
     # key: value
   files:
-   code-config:
+    code-config:
       key1: value1
       key2: value2
-   dev-config:
+    dev-config:
       key1: value1
       key2: value2
 
@@ -457,7 +457,7 @@ sealedSecret:
   annotations:
     # key: value
   files:
-#  nameSuffix of sealedSecret
+    #  nameSuffix of sealedSecret
     example:
       encryptedData:
         name: AgBghrdepGMKmp/rdtJrkBv/CWpJbtmoMsbKQ7QiZZ2kUoLeeTbrDnhmJY03kWKkNW4kN/sQRf6r1vvBEaR4nkHt5f/ayAeaH3NveI3bdb0xv/svvWjyjehwqwr/kNEAVWxRoUij0Y7MyIEAr4hnV2UnrhgvcjPJLNA8bK6spA+kuT328Vpyceyvnm6yArNn1aYlEckaFHrnculHWRpG73iRYxS5GWAY7EdkLXx7OLLWoopHtLcupklYyPfraJzPvBNZ5/PsyjlUBvoQbGV3cZlrdEj1WHj2S1RQ13ddf2WGtMHmY83t9B3LFZAZuA7BBt4rjludbwQm3/tJ5Kas1dDsSIRIIF7MTeum9YfRB8XUz8IxVKQ/JDskeynrWe3VzN/3HFVnv9GGFy+BCVXZKVU/roIRancz+nXkyoOHS722ZpBi53dfLItoS5dG+0EzArMTQzK/KXHz3b1rxp5oWWDNt3WggTiSg2zwy5ZR8VV2ToTDof6UrFmbCZv/kKriyxbVSxIo3KFnvuRiUZ5MwC0TNut4mW3LKyJfHqkUuLa1mYV6tKF58qBnoj/+JaibAIBEudT9hms5U52p7/jKmgHuop7XPEsz4OVwER//Vbv7X6ctoXtyPu6mZyOfOyJHM8Qj/H7/gwMBYhZHQ96DWrVmZOsWSRpZGJni4Xm7rgt2cFj6UtWv6lvl8aOi/HSZVC3TwWZ9mQrk
@@ -512,53 +512,53 @@ serviceMonitor:
 
   # List of the endpoints of service from which prometheus will scrape data
   endpoints:
-  - interval: 5s
-    path: /actuator/prometheus
-    port: http
+    - interval: 5s
+      path: /actuator/prometheus
+      port: http
 
 # autoscaling is used for horizonal pod autoscaling
 autoscaling:
-# enabled is a boolean flag for enabling or disabling autoscaling
+  # enabled is a boolean flag for enabling or disabling autoscaling
   enabled: true
-# additionalLabels defines additional labels
+  # additionalLabels defines additional labels
   additionalLabels:
     key: value
-# annotations defines annotations in key value pair
+  # annotations defines annotations in key value pair
   annotations:
     # key: value
-# minReplicas sets the minimum number of replicas
+  # minReplicas sets the minimum number of replicas
   minReplicas: 1
-# maxReplicas sets the maximum number of replicas
+  # maxReplicas sets the maximum number of replicas
   maxReplicas: 10
-# metrics is the list of metrics used for hpa
+  # metrics is the list of metrics used for hpa
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-         type: Utilization
-         averageUtilization: 60
-  - type: Resource
-    resource:
-      name: memory
-      target:
-         type: Utilization
-         averageUtilization: 60
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 60
 
 # autoscaling is used for vertical pod autoscaling
 vpa:
-# enabled is a boolean flag for enabling or disabling vpa
+  # enabled is a boolean flag for enabling or disabling vpa
   enabled: true
-# additionalLabels defines additional labels
+  # additionalLabels defines additional labels
   additionalLabels:
     # key: value
-# annotations defines annotations in key value pair
+  # annotations defines annotations in key value pair
   annotations:
     # key: value
-# container policies for individual containers.
-# There can be at most one entry for every named container and optionally a single wildcard entry with `containerName = '*'`, which handles all containers that do not have individual policies.
+  # container policies for individual containers.
+  # There can be at most one entry for every named container and optionally a single wildcard entry with `containerName = '*'`, which handles all containers that do not have individual policies.
   containerPolicies:
-    - containerName: '*'
+    - containerName: "*"
       minAllowed:
         cpu: 0.5
         memory: 1Gi
@@ -652,26 +652,26 @@ alertmanagerConfig:
     route:
       receiver: "null"
       groupBy:
-      - job
+        - job
       routes:
-      - receiver: "null"
-        groupBy:
-        - alertname
-        - severity
-        continue: true
+        - receiver: "null"
+          groupBy:
+            - alertname
+            - severity
+          continue: true
       groupWait: 30s
       groupInterval: 5m
       repeatInterval: 12h
     receivers:
-    - name: "null"
+      - name: "null"
     inhibitRules:
-    - sourceMatch:
-        - name: severity
-          value: 'critical'
-      targetMatch:
-        - name: severity
-          value: 'warning'
-      equal: ['cluster', 'service']
+      - sourceMatch:
+          - name: severity
+            value: "critical"
+        targetMatch:
+          - name: severity
+            value: "warning"
+        equal: ["cluster", "service"]
 
 # PrometheusRule object for defining application alerting rules
 prometheusRule:
@@ -703,13 +703,13 @@ externalSecret:
   #SecretStore defines which SecretStore to use when fetching the secret data
   secretStore:
     name: example-secret-store
-    #kind: SecretStore # or ClusterSecretStore  
+    #kind: SecretStore # or ClusterSecretStore
 
   # RefreshInterval is the amount of time before the values reading again from the SecretStore provider
   refreshInterval: "1m"
   files:
     secret-1-name:
-      #Data defines the connection between the Kubernetes Secret keys and the Provider data 
+      #Data defines the connection between the Kubernetes Secret keys and the Provider data
       data:
         example-secret-key:
           remoteRef:
@@ -741,29 +741,29 @@ networkPolicy:
 
   # Ingress rules
   ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
+    - from:
+        - ipBlock:
+            cidr: 172.17.0.0/16
+            except:
+              - 172.17.1.0/24
+        - namespaceSelector:
+            matchLabels:
+              project: myproject
+        - podSelector:
+            matchLabels:
+              role: frontend
+      ports:
+        - protocol: TCP
+          port: 6379
 
   # Egress rules
   egress:
     - to:
-      - ipBlock:
-          cidr: 10.0.0.0/24
+        - ipBlock:
+            cidr: 10.0.0.0/24
       ports:
-      - protocol: TCP
-        port: 5978
+        - protocol: TCP
+          port: 5978
 
 ##########################################################
 # Pod disruption budget - PDB
@@ -1295,7 +1295,7 @@ cronJob:
       schedule: "* * * 8 *"
       priorityClassName: high-priority
       imagePullSecrets:
-       - name: nexus-secret
+        - name: nexus-secret
       image:
         repository: docker.io/nginx
         tag: v1.0.0
@@ -1303,15 +1303,15 @@ cronJob:
         KEY:
           value: VALUE
       command: ["/bin/bash"]
-      args: ["-c","sleep 5000"]
+      args: ["-c", "sleep 5000"]
       resources:
         requests:
-            memory: 5Gi
-            cpu: 1
+          memory: 5Gi
+          cpu: 1
       dnsConfig:
         options:
           - name: ndots
-            value: '1'
+            value: "1"
 
 # Take backup of application namespace
 backup:
@@ -1320,7 +1320,7 @@ backup:
   snapshotVolumes: true
   storageLocation: "dpa-1"
   ttl: "1h0m0s"
-  includedResources: 
+  includedResources:
     - deployments
     - services
     - persistentvolumeclaims
@@ -1335,7 +1335,7 @@ backup:
     - resourcequotas
     - controllerrevisions.apps
 
-job: 
+job:
   enabled: true
   jobs:
     db-migration:
@@ -1344,20 +1344,20 @@ job:
         helm.sh/hook-weight: "-1"
         helm.sh/hook-delete-policy: "before-hook-creation"
       imagePullSecrets:
-       - name: nexus-secret
-      image: 
+        - name: nexus-secret
+      image:
         repository: docker.io/nginx
         tag: v1.0.0
-      env: 
+      env:
         KEY:
           value: VALUE
       command: ["/bin/bash"]
-      args: ["-c","sleep 5000"]
-      resources:  
+      args: ["-c", "sleep 5000"]
+      resources:
         requests:
-            memory: 5Gi
-            cpu: 1
+          memory: 5Gi
+          cpu: 1
       dnsConfig:
         options:
           - name: ndots
-            value: '1'
+            value: "1"
