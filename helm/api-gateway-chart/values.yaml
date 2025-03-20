@@ -1,0 +1,141 @@
+# Name of the application.
+applicationName: "api-gateway-shopnow"
+
+namespaceOverride: "shopnow"
+
+# These labels will be added on all resources, and you can add additional labels from below on individual resource
+labels:
+  group: com.ndthang.group
+  team: ndthang
+deployment:
+  enabled: true
+  dnsConfig:
+    options:
+      - name: ndots
+        value: "1"
+  dnsPolicy: ClusterFirst
+  # By default deploymentStrategy is set to rollingUpdate with maxSurge of 25% and maxUnavailable of 25%
+  # You can change type to `Recreate` or can uncomment `rollingUpdate` specification and adjust them to your usage.
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+
+  # Reload deployment if configMap/secret updates
+  reloadOnChange: true
+
+  # Replicas to be created
+  replicas: 1
+
+  containerSecurityContext:
+    capabilities:
+      add: ["NET_BIND_SERVICE"]
+
+  # Image of the app container
+  image:
+    repository: harbor.rnd.com/shopnow/api-gateway
+    tag: v1
+    pullPolicy: IfNotPresent
+
+  # Secrets used to pull image
+  imagePullSecrets:
+    - name: shopnow-registry-secret
+
+  # Resources to be defined for pod
+  resources:
+    limits:
+      memory: 256Mi
+      cpu: 0.5
+    requests:
+      memory: 128Mi
+      cpu: 0.1
+
+  # Command for primary container
+  command: []
+
+  # Args for primary contaner
+  args: []
+
+  # List of ports for the primary container
+  ports:
+    - containerPort: 80
+      name: http
+      protocol: TCP
+
+  # Networking using the host network
+  hostNetwork: false
+
+  volumeMounts:
+    shopnow-api-gateway-volume:
+      mountPath: /app/src/main/resources/application.properties
+      subPath: application.properties
+  volumes:
+    shopnow-api-gateway-volume:
+      configMap:
+        name: "api-gateway-shopnow-api-gateway-shopnow-config"
+
+# Additional ConfigMaps
+configMap:
+  enabled: true
+  files:
+    api-gateway-shopnow-config: # This will become the ConfigMap name
+      application.properties: |
+        spring.application.name=api-gateway
+        server.port=5860
+
+        eureka.instance.hostname=api-gateway
+        eureka.instance.instance-id=${spring.application.name}
+        eureka.client.service-url.defaultZone=http://discovery-server-shopnow:8761/eureka/
+
+        management.endpoints.web.base-path=/actuator
+        management.endpoints.web.exposure.include=*
+
+        spring.main.web-application-type=reactive
+
+        spring.cloud.gateway.discovery.locator.enabled=true
+        spring.cloud.gateway.routes[0].id=PRODUCT-SERVICE
+        spring.cloud.gateway.routes[0].uri=http://product-service-shopnow:5861
+        spring.cloud.gateway.routes[0].predicates[0]=Path=/api/product/**
+
+        spring.cloud.gateway.routes[1].id=SHOPPING-CART-SERVICE
+        spring.cloud.gateway.routes[1].uri=http://cart-service-shopnow:5863
+        spring.cloud.gateway.routes[1].predicates[0]=Path=/api/shopping-cart/**
+
+        spring.cloud.gateway.routes[2].id=USER-SERVICE
+        spring.cloud.gateway.routes[2].uri=http://user-service-shopnow:5865
+        spring.cloud.gateway.routes[2].predicates[0]=Path=/api/user/**
+
+        spring.security.oauth2.resourceserver.jwt.issuer-uri=http://keycloak-realms:8080/realms/java-microservice-realm
+
+# Service object for servicing pods
+service:
+  enabled: true
+  type: ClusterIP
+  ports:
+    - name: tcp
+      port: 5860
+      protocol: TCP
+      targetPort: 5860
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  sessionAffinity: None
+
+# Ingress object for exposing services
+ingress:
+  enabled: true
+
+  # Name of the ingress class
+  ingressClassName: nginx
+
+  # List of host addresses to be exposed by this Ingress
+
+  hosts:
+    - host: "{{ .Release.Name }}.ndthang.live"
+      paths:
+        - path: /
+          pathType: "Prefix"
+          serviceName: "api-gateway-shopnow"
+          servicePort: 5860
