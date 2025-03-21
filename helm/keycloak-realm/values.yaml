@@ -39,6 +39,7 @@ extraEnvVars:
 command:
   - "/opt/bitnami/keycloak/bin/kc.sh"
   - "start"
+args:
   - "--http-enabled=true"
   - "--hostname-strict=false"
 
