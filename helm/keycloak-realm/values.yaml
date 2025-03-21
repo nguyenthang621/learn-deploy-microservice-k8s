@@ -36,6 +36,12 @@ extraEnvVars:
   - name: KEYCLOAK_ADMIN_PASSWORD
     value: "admin"
 
+command:
+  - "/opt/keycloak/bin/kc.sh"
+  - "start"
+  - "--http-enabled=true"
+  - "--hostname-strict=false"
+
 extraVolumes:
   - name: keycloak-realms
     persistentVolumeClaim:
