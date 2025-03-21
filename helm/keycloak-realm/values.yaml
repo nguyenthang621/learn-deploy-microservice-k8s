@@ -37,7 +37,7 @@ extraEnvVars:
     value: "admin"
 
 command:
-  - "/opt/keycloak/bin/kc.sh"
+  - "/opt/bitnami/keycloak/bin/kc.sh"
   - "start"
   - "--http-enabled=true"
   - "--hostname-strict=false"
