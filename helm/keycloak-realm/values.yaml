@@ -54,6 +54,8 @@ keycloakConfigCli:
   enabled: true
   ttlSecondsAfterFinished: 300 # Xóa Job sau 5 phút khi hoàn thành
   extraEnvVars:
+    - name: KEYCLOAK_FRONTEND_URL
+      value: "http://keycloak-shopnow.ndthang.live"
     - name: DB_VENDOR
       value: "postgres"
     - name: DB_ADDR
