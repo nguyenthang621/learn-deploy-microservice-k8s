@@ -1,3 +1,6 @@
+gitlabUrl: "http://192.168.10.159"
+runnerRegistrationToken: "glrt-t1_yJMHr4Hz-RhkLbnRgnSo"
+
 concurrent: 10
 
 rbac:
