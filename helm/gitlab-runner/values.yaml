@@ -7,6 +7,9 @@ rbac:
   create: false
   clusterWideAccess: true # Đảm bảo quyền cluster-admin
   serviceAccountName: gitlab-runner-sa
+serviceAccount:
+  create: false
+  name: gitlab-runner-sa
 
 runners:
   tags: "gitlab-runner-on-k8s, shopnow-k8s"
