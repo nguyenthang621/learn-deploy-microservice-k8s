@@ -8,11 +8,12 @@ rbac:
   clusterWideAccess: true
 
 runners:
-  tags: "k8s, ci-cd"
+  tags: "gitlab-runner-on-k8s, shopnow-k8s"
   config: |
     [[runners]]
       [runners.kubernetes]
         namespace = "gitlab-runner"
         image = "alpine"
         image_pull_secrets = ["shopnow-registry-secret"]
+        service-account = "gitlab-runner-sa"
         privileged = true
