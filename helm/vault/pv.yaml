@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: vault-pv
+  namespace: shopnow
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    path: /mnt/gluster/vault
+    server: 192.168.10.155
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: nfs-storage
