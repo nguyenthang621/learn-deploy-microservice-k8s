@@ -1,22 +1,17 @@
-gitlabUrl: "http://192.168.10.154"
-runnerRegistrationToken: "glrt-t1_1tzyZWtHFd478BLEPXps"
-
 concurrent: 10
 
 rbac:
   create: true
-  clusterWideAccess: true
+  clusterWideAccess: true # Đảm bảo quyền cluster-admin
+  serviceAccountName: gitlab-runner-sa
 
 runners:
   tags: "gitlab-runner-on-k8s, shopnow-k8s"
   config: |
     [[runners]]
-      url = "http://192.168.10.154"
-      token = "glrt-t1_1tzyZWtHFd478BLEPXps"
-      executor = "kubernetes"
       [runners.kubernetes]
         namespace = "gitlab-runner"
         image = "alpine"
         image_pull_secrets = ["shopnow-registry-secret"]
-        service_account = "gitlab-runner-sa"
+        service-account = "gitlab-runner-sa"
         privileged = true
