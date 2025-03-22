@@ -18,5 +18,4 @@ runners:
         namespace = "gitlab-runner"
         image = "alpine"
         image_pull_secrets = ["shopnow-registry-secret"]
-        service-account = "gitlab-runner-sa"
         privileged = true
