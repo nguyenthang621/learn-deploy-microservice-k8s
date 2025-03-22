@@ -6,7 +6,6 @@ concurrent: 10
 rbac:
   create: false
   clusterWideAccess: true # Đảm bảo quyền cluster-admin
-  serviceAccountName: gitlab-runner-sa
 serviceAccount:
   create: false
   name: gitlab-runner-sa
