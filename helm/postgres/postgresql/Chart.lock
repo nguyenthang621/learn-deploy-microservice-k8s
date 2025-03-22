@@ -1,0 +1,9 @@
+dependencies:
+- name: common
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 2.30.0
+- name: pvc
+  repository: file://./charts/pvc
+  version: 0.1.0
+digest: sha256:cbdf5fbd96d5ce96d10c31ed253143ce2d52492fe9d7875d132b2ca8a87814b4
+generated: "2025-03-18T16:06:07.46562342+07:00"
