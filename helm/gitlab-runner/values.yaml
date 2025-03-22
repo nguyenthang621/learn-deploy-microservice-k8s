@@ -1,0 +1,18 @@
+gitlabUrl: "http://192.168.10.154"
+runnerRegistrationToken: "glrt-t1_1tzyZWtHFd478BLEPXps"
+
+concurrent: 10
+
+rbac:
+  create: true
+  clusterWideAccess: true
+
+runners:
+  tags: "k8s, ci-cd"
+  config: |
+    [[runners]]
+      [runners.kubernetes]
+        namespace = "gitlab-runner"
+        image = "alpine"
+        image_pull_secrets = ["shopnow-registry-secret"]
+        privileged = true
