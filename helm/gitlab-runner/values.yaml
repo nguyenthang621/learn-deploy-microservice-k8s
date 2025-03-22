@@ -11,9 +11,12 @@ runners:
   tags: "gitlab-runner-on-k8s, shopnow-k8s"
   config: |
     [[runners]]
+      url = "http://192.168.10.154"
+      token = "glrt-t1_1tzyZWtHFd478BLEPXps"
+      executor = "kubernetes"
       [runners.kubernetes]
         namespace = "gitlab-runner"
         image = "alpine"
         image_pull_secrets = ["shopnow-registry-secret"]
-        service-account = "gitlab-runner-sa"
+        service_account = "gitlab-runner-sa"
         privileged = true
