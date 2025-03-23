@@ -27,3 +27,18 @@ helm
 
 1. postgres-keycloak
 h install postgres-keycloak ./postgres/postgresql/ -f ./postgres-keycloak/values.yaml -n shopnow
+
+
+---
+Script send multi file
+
+curl -F "chat_id=YOUR_CHAT_ID" 
+-F 'media=[{"type": "document", "media": "attach://file1"}, 
+{"type": "document", "media": "attach://file2"}, 
+{"type": "document", "media": "attach://file3"}, 
+{"type": "document", "media": "attach://file4"}]' 
+-F "file1=@$(pwd)/${CODECLIMATE_REPORT}" 
+-F "file2=@$(pwd)/${SNYKSCAN_REPORT}" 
+-F "file3=@$(pwd)/${TRIVY_IMAGE_REPORT}" 
+-F "file4=@$(pwd)/${ARACHNI_WEBSITE_REPORT}" 
+"https://api.telegram.org/botYOUR_TOKEN/sendMediaGroup"
