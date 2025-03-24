@@ -9,7 +9,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   nfs:
-    path: /mnt/gluster/vault
+    path: /mountdata/gluster/vault
     server: 192.168.10.155
   persistentVolumeReclaimPolicy: Retain
   storageClassName: nfs-storage
