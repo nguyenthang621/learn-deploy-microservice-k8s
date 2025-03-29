@@ -146,9 +146,9 @@ job:
   enabled: true
   jobs:
     restore-backup:
-      annotations:
-        argocd.argoproj.io/hook: PreSync
-        argocd.argoproj.io/hook-delete-policy: HookSucceeded
+      # annotations:
+      #   argocd.argoproj.io/hook: PreSync
+      #   argocd.argoproj.io/hook-delete-policy: HookSucceeded
       image:
         repository: bitnami/postgresql
         tag: 17.4.0-debian-12-r8
