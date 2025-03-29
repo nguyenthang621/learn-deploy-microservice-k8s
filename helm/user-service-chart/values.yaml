@@ -160,7 +160,6 @@ job:
       command:
         - /bin/sh
         - -c
-      args:
         - |
           if [ -f "$BACKUP_FILE_PATH" ]; then
             pg_restore -U postgres -h postgres-shopnow-postgresql.shopnow.svc.cluster.local -d postgres --no-owner --no-acl --if-exists $BACKUP_FILE_PATH;
