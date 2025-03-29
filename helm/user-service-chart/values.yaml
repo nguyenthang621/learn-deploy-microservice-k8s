@@ -149,11 +149,20 @@ job:
       env:
         - name: BACKUP_FILE_PATH
           value: /backup/backup-latest.dump
+        - name: PGPASSWORD
+          value: "admin"
+      command:
+        - /bin/sh
+        - -c
+        - |
+          pg_restore -U postgres -h postgres-shopnow-postgresql.shopnow.svc.cluster.local -d postgres --no-owner --no-acl --if-exists $BACKUP_FILE_PATH
       volumeMounts:
         - name: backup-volume
           mountPath: /backup
       restartPolicy: OnFailure
       volumes:
         - name: backup-volume
-          path: /mountdata/gluster/postgresql/backup
-          type: DirectoryOrCreate
+          hostPath:
+            path: /mountdata/gluster/postgresql/backup
+            type: DirectoryOrCreate
+  backoffLimit: 4
