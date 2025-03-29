@@ -146,6 +146,9 @@ job:
   enabled: true
   jobs:
     restore-backup:
+      # annotations:
+      # argocd.argoproj.io/hook: PreSync
+      # argocd.argoproj.io/hook-delete-policy: HookSucceeded
       image:
         repository: bitnami/postgresql
         tag: 17.4.0-debian-12-r8
@@ -157,7 +160,6 @@ job:
       command:
         - /bin/sh
         - -c
-
       args:
         - >
           if [ -f "$BACKUP_FILE_PATH" ]; then
@@ -166,7 +168,6 @@ job:
             echo "Backup file not found at $BACKUP_FILE_PATH";
             exit 1;
           fi
-
       volumeMounts:
         - name: backup-volume
           mountPath: /backup
