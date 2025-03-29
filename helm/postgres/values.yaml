@@ -55,36 +55,50 @@ primary:
   volumePermissions:
     enabled: true
 
-# CronJob backup
-extraDeploy:
-  - apiVersion: batch/v1
-    kind: CronJob
-    metadata:
-      name: postgresql-backup
-      namespace: shopnow
-    spec:
-      schedule: "*/10 * * * *" # Backup evry 10 minutes
-      jobTemplate:
-        spec:
-          template:
-            spec:
-              containers:
-                - name: backup
-                  image: bitnami/postgresql:17.4.0-debian-12-r8 # check ver in values postgresql
-                  command:
-                    - /bin/sh
-                    - -c
-                    - |
-                      pg_dump -U postgres -h postgresql.shopnow.svc.cluster.local -d postgres > /backup/backup-$(date +%Y%m%d).sql && \
-                      cp /backup/backup-$(date +%Y%m%d).sql /backup-dest/
-                  env:
-                    - name: PGPASSWORD
-                      value: "abcd456789"
-                  volumeMounts:
-                    - name: backup-dest
-                      mountPath: /backup-dest
-              restartPolicy: OnFailure
-              volumes:
-                - name: backup-dest
-                  persistentVolumeClaim:
-                    claimName: backup-postgresql-pvc # PVC để lưu trữ backup lâu dài
+backup:
+  ## @param backup.enabled Enable the logical dump of the database "regularly"
+  enabled: true
+  cronjob:
+    schedule: "@daily"
+    ## @param backup.cronjob.timeZone Set the cronjob parameter timeZone
+    timeZone: ""
+    concurrencyPolicy: Allow
+    failedJobsHistoryLimit: 1
+    successfulJobsHistoryLimit: 3
+    startingDeadlineSeconds: ""
+    ttlSecondsAfterFinished: ""
+    restartPolicy: OnFailure
+    podSecurityContext:
+      enabled: true
+      fsGroupChangePolicy: Always
+      sysctls: []
+      supplementalGroups: []
+      fsGroup: 1001
+
+    containerSecurityContext:
+      enabled: true
+      seLinuxOptions: {}
+      runAsUser: 1001
+      runAsGroup: 1001
+      runAsNonRoot: true
+      privileged: false
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ["ALL"]
+      seccompProfile:
+        type: "RuntimeDefault"
+    ## @param backup.cronjob.command Set backup container's command to run
+    command:
+      - /bin/sh
+      - -c
+      - "pg_dumpall --clean --if-exists --load-via-partition-root --quote-all-identifiers --no-password --file=${PGDUMP_DIR}/pg_dumpall-$(date '+%Y-%m-%d-%H-%M').pgdump"
+    storage:
+      enabled: true
+      existingClaim: "backup-postgresql-pvc"
+      storageClass: "nfs-storage"
+      accessModes:
+        - ReadWriteOnce
+      mountPath: /backup/pgdump
+      size: 5Gi
+      subPath: ""
