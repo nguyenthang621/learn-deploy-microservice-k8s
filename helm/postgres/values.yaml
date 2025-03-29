@@ -82,7 +82,7 @@ extraDeploy:
                       tee /backup-dest/backup-latest.dump > /backup-dest/backup-$(date +%Y%m%d-%H%M).dump
                   env:
                     - name: PGPASSWORD
-                      value: "abcd456789"
+                      value: "admin"
                   volumeMounts:
                     - name: backup-dest
                       mountPath: /backup-dest
