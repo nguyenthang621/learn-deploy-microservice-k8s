@@ -139,6 +139,9 @@ ingress:
           serviceName: "user-service-shopnow"
           servicePort: 5865
 
+rbac:
+  enabled: false
+
 job:
   enabled: true
   jobs:
