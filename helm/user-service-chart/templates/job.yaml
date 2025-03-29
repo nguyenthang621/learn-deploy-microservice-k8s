@@ -68,7 +68,8 @@ spec:
 {{ toYaml . | indent 8 }}
         {{- end }}
         {{- if $job.command }}
-        command: {{ $job.command }}
+        command:
+        {{ toYaml $job.command | indent 8 }}
         {{- end }}
         {{- with $job.args }}
         args:
