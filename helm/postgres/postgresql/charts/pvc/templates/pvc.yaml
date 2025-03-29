@@ -1,4 +1,3 @@
-# charts/pvc/templates/pvc.yaml
 {{ if .Values.enabled }}
 
 # Define PersistentVolume (PV)
@@ -7,25 +6,25 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Values.pvName | default "postgres-volume" }}
+  name: {{ .Values.pvName }}
   labels:
-    type: {{ .Values.type | default "local" }}
-    app: {{ .Values.app | default "postgres" }}
+    type: {{ .Values.type }}
+    app: {{ .Values.app }}
   {{- if .Values.pvAnnotations }}
   annotations:
     {{ toYaml .Values.pvAnnotations | nindent 4 }}
   {{- end }}
 spec:
   capacity:
-    storage: {{ .Values.pvStorageSize | default "10Gi" | quote }}
+    storage: {{ .Values.pvStorageSize | quote }}
   accessModes:
-    - {{ .Values.accessMode | default "ReadWriteMany" | quote }}
-  persistentVolumeReclaimPolicy: {{ .Values.reclaimPolicy | default "Retain" | quote }}
-  storageClassName: {{ .Values.storageClass | default "nfs-storage" | quote }}
+    - {{ .Values.accessMode | quote }}
+  persistentVolumeReclaimPolicy: {{ .Values.reclaimPolicy | quote }}
+  storageClassName: {{ .Values.storageClass | quote }}
   {{- if .Values.nfs }}
   nfs:
-    path: {{ .Values.nfs.path | default "/data/nfs-shared2/postgresql" | quote }}
-    server: {{ .Values.nfs.server | default "192.168.10.155" | quote }}
+    path: {{ .Values.nfs.path | quote }}
+    server: {{ .Values.nfs.server | quote }}
   {{- end }}
 {{- end }}
 
@@ -34,20 +33,20 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Values.pvcName | default "postgres-volume-claim" }}
-  namespace: {{ .Values.namespace | default "shopnow" }}
+  name: {{ .Values.pvcName }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: {{ .Values.app | default "postgres" }}
+    app: {{ .Values.app }}
   {{- if .Values.pvcAnnotations }}
   annotations:
     {{ toYaml .Values.pvcAnnotations | nindent 4 }}
   {{- end }}
 spec:
   accessModes:
-    - {{ .Values.accessMode | default "ReadWriteMany" | quote }}
+    - {{ .Values.accessMode | quote }}
   resources:
     requests:
-      storage: {{ .Values.storageSize | default "5Gi" | quote }}
-  storageClassName: {{ .Values.storageClass | default "nfs-storage" | quote }}
+      storage: {{ .Values.storageSize | quote }}
+  storageClassName: {{ .Values.storageClass | quote }}
 
 {{- end }}

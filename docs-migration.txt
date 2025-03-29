@@ -42,3 +42,9 @@ curl -F "chat_id=YOUR_CHAT_ID"
 -F "file3=@$(pwd)/${TRIVY_IMAGE_REPORT}" 
 -F "file4=@$(pwd)/${ARACHNI_WEBSITE_REPORT}" 
 "https://api.telegram.org/botYOUR_TOKEN/sendMediaGroup"
+
+
+---
+Exportfs (/etc/export)
+/data/ndthang2/  *(rw,sync,no_subtree_check,no_root_squash)   # path lưu storage
+/mountdata/gluster *(rw,sync,no_subtree_check,no_root_squash,fsid=0)  # path lưu thư mục ánh xạ (mount)
