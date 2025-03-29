@@ -87,4 +87,4 @@ extraDeploy:
               volumes:
                 - name: backup-dest
                   persistentVolumeClaim:
-                    claimName: backup-pvc # PVC để lưu trữ backup lâu dài
+                    claimName: backup-postgresql-pvc # PVC để lưu trữ backup lâu dài
