@@ -161,12 +161,7 @@ job:
         - /bin/sh
         - -c
         - |
-          if [ -f "$BACKUP_FILE_PATH" ]; then
-            pg_restore -U postgres -h postgres-shopnow-postgresql.shopnow.svc.cluster.local -d postgres --no-owner --no-acl --if-exists $BACKUP_FILE_PATH;
-          else
-            echo "Backup file not found at $BACKUP_FILE_PATH";
-            exit 1;
-          fi
+          pg_restore -U postgres -h postgres-shopnow-postgresql.shopnow.svc.cluster.local -d postgres --no-owner --no-acl --if-exists $BACKUP_FILE_PATH;
       volumeMounts:
         - name: backup-volume
           mountPath: /backup
