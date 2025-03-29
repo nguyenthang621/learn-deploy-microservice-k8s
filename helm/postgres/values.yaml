@@ -77,7 +77,8 @@ extraDeploy:
                     - /bin/sh
                     - -c
                     - |
-                      pg_dump -U postgres -h postgresql.shopnow.svc.cluster.local postgres -F c -b -v | \
+                      find /backup-dest -type f -name 'backup-*.dump' ! -name 'backup-latest.dump' -mtime +30 -exec rm -f {} \;
+                      pg_dump -U postgres -h 	postgres-shopnow-postgresql.shopnow.svc.cluster.local postgres -F c -b -v | \
                       tee /backup-dest/backup-latest.dump > /backup-dest/backup-$(date +%Y%m%d-%H%M).dump
                   env:
                     - name: PGPASSWORD
