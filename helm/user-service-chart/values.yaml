@@ -176,4 +176,4 @@ job:
           hostPath:
             path: /mountdata/gluster/postgresql/backup
             type: DirectoryOrCreate
-    backoffLimit: 4
+      backoffLimit: 4
