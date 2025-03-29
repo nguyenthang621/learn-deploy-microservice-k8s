@@ -146,9 +146,6 @@ job:
   enabled: true
   jobs:
     restore-backup:
-      # annotations:
-      #   argocd.argoproj.io/hook: PreSync
-      #   argocd.argoproj.io/hook-delete-policy: HookSucceeded
       image:
         repository: bitnami/postgresql
         tag: 17.4.0-debian-12-r8
@@ -162,7 +159,14 @@ job:
         - -c
       args:
         - |
-          pg_restore -U postgres -h postgres-shopnow-postgresql.shopnow.svc.cluster.local -d postgres --no-owner --no-acl --if-exists $BACKUP_FILE_PATH;
+          echo "Checking for backup file at $BACKUP_FILE_PATH"
+          if [ -f "$BACKUP_FILE_PATH" ]; then
+            echo "Restoring database from $BACKUP_FILE_PATH"
+            pg_restore -U postgres -h postgres-shopnow-postgresql.shopnow.svc.cluster.local -d postgres --no-owner --no-acl --if-exists $BACKUP_FILE_PATH
+          else
+            echo "Backup file not found at $BACKUP_FILE_PATH"
+            exit 1
+          fi
       volumeMounts:
         - name: backup-volume
           mountPath: /backup
