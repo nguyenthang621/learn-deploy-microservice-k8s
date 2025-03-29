@@ -64,6 +64,8 @@ extraDeploy:
       namespace: shopnow
     spec:
       schedule: "*/10 * * * *" # Backup evry 10 minutes
+      successfulJobsHistoryLimit: 3 # Giới hạn số job thành công lưu lại
+      failedJobsHistoryLimit: 1 # Giới hạn số job thất bại lưu lại
       jobTemplate:
         spec:
           template:
