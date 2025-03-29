@@ -145,6 +145,44 @@ rbac:
 job:
   enabled: true
   jobs:
+    backup-database: # Job mới để backup trước khi update
+      image:
+        repository: bitnami/postgresql
+        tag: 17.4.0-debian-12-r8
+      env:
+        - name: BACKUP_FILE_PATH
+          value: /backup/backup-latest.dump
+        - name: PGPASSWORD
+          value: "admin"
+      command:
+        - /bin/sh
+        - -c
+      args:
+        - |
+          echo "Starting database backup to $BACKUP_FILE_PATH"
+          pg_dump -U postgres -h postgres-shopnow-postgresql.shopnow.svc.cluster.local -d postgres --no-owner --no-acl -F c > $BACKUP_FILE_PATH
+          if [ $? -eq 0 ]; then
+            echo "Backup completed successfully"
+          else
+            echo "Backup failed"
+            exit 1
+          fi
+      volumeMounts:
+        - name: backup-volume
+          mountPath: /backup
+      restartPolicy: OnFailure
+      volumes:
+        - name: backup-volume
+          hostPath:
+            path: /mountdata/gluster/postgresql/backup
+            type: DirectoryOrCreate
+      backoffLimit: 4
+      ttlSecondsAfterFinished: 60 # Xóa pod sau 60 giây
+      annotations:
+        argocd.argoproj.io/hook: "PreSync" # Chạy trước khi đồng bộ
+        argocd.argoproj.io/hook-delete-policy: "HookSucceeded" # Xóa khi thành công
+        argocd.argoproj.io/sync-wave: "0" # Chạy trước restore-backup
+
     restore-backup:
       image:
         repository: bitnami/postgresql
@@ -177,3 +215,4 @@ job:
             path: /mountdata/gluster/postgresql/backup
             type: DirectoryOrCreate
       backoffLimit: 4
+      ttlSecondsAfterFinished: 60
