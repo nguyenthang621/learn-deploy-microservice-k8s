@@ -138,3 +138,22 @@ ingress:
           pathType: "Prefix"
           serviceName: "user-service-shopnow"
           servicePort: 5865
+
+job:
+  enabled: true
+  jobs:
+    restore-backup:
+      image:
+        repository: bitnami/postgresql
+        tag: 17.4.0-debian-12-r8
+      env:
+        - name: BACKUP_FILE_PATH
+          value: /backup/backup-latest.dump
+      volumeMounts:
+        - name: backup-volume
+          mountPath: /backup
+      restartPolicy: OnFailure
+      volumes:
+        - name: backup-volume
+          path: /mountdata/gluster/postgresql/backup
+          type: DirectoryOrCreate
