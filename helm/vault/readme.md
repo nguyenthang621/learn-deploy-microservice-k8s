@@ -3,7 +3,7 @@
 1. Tạo thư mục lưu trữ
 
 ```sh
-mkdir -p /mnt/gluster/shopnow/vault
+mkdir -p /mountdata/gluster/shopnow/vault
 ```
 
 2. Tạo pv vault
@@ -20,7 +20,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   nfs:
-    path: /mnt/gluster/shopnow/vault
+    path: /mountdata/gluster/shopnow/vault
     server: 192.168.10.155
   persistentVolumeReclaimPolicy: Retain
   storageClassName: nfs-storage
